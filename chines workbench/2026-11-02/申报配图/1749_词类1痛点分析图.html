@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>传统总分评价掩盖微观认知盲区</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper: "#FBF9F6",
+            ink: "#333333",
+            mute: "#666666",
+            line: "#E5E0D8",
+            peach: "#E8B4B8",
+            peachSoft: "#F3D1D3",
+            teal: "#B2C8C7",
+            tealSoft: "#D5E4E2"
+          },
+          fontFamily: {
+            serif: ['"Songti SC"', '"STSong"', '"Noto Serif SC"', '"SimSun"', "serif"],
+            sans: ['"PingFang SC"', '"Hiragino Sans GB"', '"Microsoft YaHei"', '"Noto Sans SC"', "sans-serif"]
+          },
+          boxShadow: {
+            card: "0 8px 24px rgba(44, 44, 44, 0.04)"
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="min-h-screen bg-paper p-10 font-sans text-ink antialiased">
+  <main class="mx-auto flex min-h-[calc(100vh-5rem)] max-w-[1180px] flex-col">
+    <header class="mb-8 text-center">
+      <h1 class="font-serif text-[24px] font-bold tracking-[0.12em] text-ink">传统总分评价掩盖微观认知盲区</h1>
+      <div class="mt-4 flex items-center justify-center gap-4">
+        <span class="h-px w-14 bg-peach" aria-hidden="true"></span>
+        <p class="font-serif text-[14px] tracking-[0.14em] text-peach">—— 基于《词类1》50人样本的题号达成分化分析 ——</p>
+        <span class="h-px w-14 bg-peach" aria-hidden="true"></span>
+      </div>
+    </header>
+
+    <section class="grid flex-1 grid-cols-1 gap-6 lg:grid-cols-10">
+      <article class="flex items-center rounded-xl border border-line bg-white p-8 shadow-sm shadow-card lg:col-span-3">
+        <div class="w-full text-center">
+          <p class="font-sans text-[48px] font-medium leading-none tracking-tight text-[#7E9E9C]">53.28分</p>
+          <p class="mt-4 text-[15px] text-mute">判断题总体均分</p>
+          <p class="mt-8 rounded-lg bg-peachSoft px-4 py-3 text-[15px] leading-7 text-ink">总分看似平稳，实则掩盖了极端的达成分化</p>
+        </div>
+      </article>
+
+      <article class="rounded-xl border border-line bg-white p-6 shadow-sm shadow-card lg:col-span-7">
+        <div id="score-chart" class="h-[460px] w-full"></div>
+      </article>
+    </section>
+
+    <footer class="mt-8 text-right">
+      <p class="font-sans text-[16px] font-semibold text-ink">结论：痛点并非基础薄弱，而是精准卡在了特定的微观认知卡点上。</p>
+    </footer>
+  </main>
+
+  <script>
+    const labels = ["判断(1)", "判断(5)", "判断(6)", "判断(3)", "判断(2)", "判断(7)", "判断(4)"];
+    const values = [5, 10, 30, 48, 48, 49, 50];
+    const peach = "#E8B4B8";
+    const teal = "#B2C8C7";
+
+    const chart = echarts.init(document.getElementById("score-chart"));
+    chart.setOption({
+      animationDuration: 900,
+      animationEasing: "cubicOut",
+      grid: { left: 72, right: 36, top: 24, bottom: 36 },
+      tooltip: {
+        trigger: "axis",
+        axisPointer: { type: "shadow" },
+        backgroundColor: "#FFFdfb",
+        borderColor: "#E5E0D8",
+        textStyle: { color: "#333333", fontFamily: "PingFang SC, Microsoft YaHei, sans-serif" },
+        formatter: function (items) {
+          const item = items[0];
+          return item.name + "<br/>满分人数：" + item.value + " / 50";
+        }
+      },
+      xAxis: {
+        type: "value",
+        min: 0,
+        max: 55,
+        interval: 10,
+        axisLine: { show: false },
+        axisTick: { show: false },
+        splitLine: { show: false },
+        axisLabel: {
+          color: "#666666",
+          fontFamily: "PingFang SC, Microsoft YaHei, sans-serif"
+        }
+      },
+      yAxis: {
+        type: "category",
+        data: labels,
+        axisLine: { lineStyle: { color: "#E5E0D8" } },
+        axisTick: { show: true, lineStyle: { color: "#E5E0D8" } },
+        axisLabel: {
+          color: "#666666",
+          fontSize: 13,
+          fontFamily: "PingFang SC, Microsoft YaHei, sans-serif"
+        }
+      },
+      series: [
+        {
+          type: "bar",
+          data: values.map(function (value, index) {
+            return {
+              value: value,
+              itemStyle: { color: index < 2 ? peach : teal, borderRadius: [0, 4, 4, 0] }
+            };
+          }),
+          barWidth: 22,
+          label: {
+            show: true,
+            position: "right",
+            color: "#333333",
+            fontFamily: "PingFang SC, Microsoft YaHei, sans-serif",
+            formatter: "{c}"
+          }
+        }
+      ]
+    });
+
+    window.addEventListener("resize", function () {
+      chart.resize();
+    });
+  </script>
+</body>
+</html>
