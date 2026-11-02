@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>现代汉语公开课 · 处所到主谓</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper: "#FBF9F6",
+            ink: "#333333",
+            mute: "#666666",
+            line: "#E5E0D8",
+            dai: "#3E5566",
+            teal: "#7E9E9C",
+            peach: "#E8B4B8"
+          },
+          fontFamily: {
+            serif: ['"Songti SC"', '"STSong"', '"Noto Serif SC"', "serif"],
+            sans: ['"PingFang SC"', '"Hiragino Sans GB"', '"Microsoft YaHei"', '"Noto Sans SC"', "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    html, body { height: 100%; background: #FBF9F6; }
+    body { margin: 0; overflow: hidden; -webkit-font-smoothing: antialiased; }
+    .deck { position: relative; height: calc(100% - 52px); }
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity .45s ease, transform .45s ease;
+    }
+    .slide.active {
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+    }
+    .radar {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(126,158,156,.18) 0 2px, transparent 3px),
+        repeating-radial-gradient(circle, transparent 0 46px, rgba(62,85,102,.18) 47px 48px);
+      border: 1px solid #E5E0D8;
+      overflow: hidden;
+    }
+    .sweep {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, transparent 0 72%, rgba(126,158,156,.05) 86%, rgba(126,158,156,.45) 100%);
+      animation: spin 4.8s linear infinite;
+    }
+    .blip {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #E8B4B8;
+      box-shadow: 0 0 0 6px rgba(232,180,184,.35);
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: .65; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+    .shake { animation: shake .35s ease; }
+    @keyframes float-score {
+      0% { opacity: 0; transform: translate(-50%, 8px); }
+      20% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -36px); }
+    }
+    .score-pop {
+      position: absolute;
+      left: 50%;
+      top: -8px;
+      font-weight: 600;
+      color: #3E5566;
+      animation: float-score .8s ease forwards;
+      pointer-events: none;
+    }
+    .rule {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height .45s ease, opacity .45s ease, margin .45s ease;
+    }
+    .rule.show {
+      max-height: 120px;
+      opacity: 1;
+      margin-top: 28px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .slide, .sweep, .blip, .shake, .score-pop, .rule { animation: none; transition: none; }
+    }
+  </style>
+</head>
+<body class="bg-paper font-sans text-ink">
+  <header class="flex h-[52px] items-center gap-4 px-8">
+    <p id="step" class="w-12 shrink-0 text-[13px] tracking-[0.08em] text-dai">1 / 4</p>
+    <div class="h-[3px] flex-1 overflow-hidden rounded-full bg-[#E5E0D8]">
+      <div id="bar" class="h-full w-1/4 rounded-full bg-teal transition-all duration-500"></div>
+    </div>
+    <p class="font-serif text-[15px] tracking-[0.16em] text-dai">知微追</p>
+  </header>
+
+  <div class="deck">
+    <section class="slide active flex items-center px-16">
+      <div class="mx-auto grid w-full max-w-[1080px] grid-cols-[280px_1fr] items-center gap-16">
+        <div class="radar" aria-hidden="true">
+          <div class="sweep"></div>
+          <span class="blip" style="left: 62%; top: 34%;"></span>
+        </div>
+        <div>
+          <h1 class="font-serif text-[40px] leading-tight tracking-[0.06em]">现代汉语：从「处所」到「主谓」的句法进阶</h1>
+          <p class="mt-4 text-[18px] tracking-[0.12em] text-[#A56B72]">——基于「一核三阶」的主语类型研判</p>
+          <p class="mt-8 max-w-[640px] text-[18px] leading-9 text-[#444]">课前，学习通导出了词类判断的分题结果。50人里，有一道题只有5人得到满分。今天不铺开整章，只核一对容易相混的判断：句首的处所，是主语，还是状语。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide flex items-center px-16">
+      <div class="mx-auto w-full max-w-[980px]">
+        <h2 class="text-center font-serif text-[36px] tracking-[0.08em]">课中研判：拨开迷雾找主语</h2>
+        <p class="mt-3 text-center text-[15px] text-mute">先选，再对规则。点对一次，记 10 分。</p>
+
+        <article class="mt-10 rounded-xl border border-[#E5E0D8] bg-white px-8 py-7 shadow-sm">
+          <p class="text-[13px] tracking-[0.16em] text-mute">第一关</p>
+          <p class="mt-2 font-serif text-[32px] tracking-[0.08em]">花园里开满了花</p>
+          <p class="mt-2 text-[15px] text-mute">句首「花园里」怎样分析？</p>
+          <div class="relative mt-6 flex gap-4" data-gate="one">
+            <button type="button" data-value="adverbial" class="choice rounded-lg border border-[#E5E0D8] bg-paper px-8 py-3 text-[16px]">作状语</button>
+            <button type="button" data-value="subject" class="choice rounded-lg border border-[#E5E0D8] bg-paper px-8 py-3 text-[16px]">作主语</button>
+          </div>
+        </article>
+
+        <article class="mt-5 rounded-xl border border-[#E5E0D8] bg-white px-8 py-7 shadow-sm">
+          <p class="text-[13px] tracking-[0.16em] text-mute">第二关</p>
+          <p class="mt-2 font-serif text-[32px] tracking-[0.08em]">花园里孩子们玩得正高兴</p>
+          <p class="mt-2 text-[15px] text-mute">句首「花园里」怎样分析？</p>
+          <div class="relative mt-6 flex gap-4" data-gate="two">
+            <button type="button" data-value="adverbial" class="choice rounded-lg border border-[#E5E0D8] bg-paper px-8 py-3 text-[16px]">作状语</button>
+            <button type="button" data-value="subject" class="choice rounded-lg border border-[#E5E0D8] bg-paper px-8 py-3 text-[16px]">作主语</button>
+          </div>
+        </article>
+
+        <div id="rule" class="rule rounded-xl border border-[#E5E0D8] bg-[#E7F1F0] px-8 py-5 text-[18px] leading-8 text-dai">判定规则：句中有别的话题，处所是状语；没有别的话题，处所是主语。</div>
+      </div>
+    </section>
+
+    <section class="slide flex items-center px-16">
+      <div class="mx-auto w-full max-w-[980px]">
+        <h2 class="text-center font-serif text-[36px] tracking-[0.08em]">知识衔接：主语家族的「新成员」</h2>
+        <p class="mx-auto mt-5 max-w-[720px] text-center text-[18px] leading-9 text-[#444]">刚才分辨的是处所短语能不能作主语。主语还有另一种容易看混的样子：大主语，和定语。</p>
+        <div class="mt-10 grid grid-cols-2 gap-6">
+          <article class="rounded-xl border border-[#E5E0D8] bg-white px-8 py-8 shadow-sm">
+            <p class="font-serif text-[30px] tracking-[0.08em]">他个子很高</p>
+            <p class="mt-6 text-[16px] leading-8">「他」是大主语，「个子」是小主语。这是主谓谓语句。</p>
+          </article>
+          <article class="rounded-xl border border-[#E5E0D8] bg-[#F8E8EA] px-8 py-8 shadow-sm">
+            <p class="font-serif text-[30px] tracking-[0.08em]">他的个子很高</p>
+            <p class="mt-6 text-[16px] leading-8">「他的」是定语，主语是「个子」。这是普通的主谓句。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide flex items-center px-16">
+      <div class="mx-auto w-full max-w-[760px] text-center">
+        <h2 class="font-serif text-[36px] tracking-[0.08em]">实战检验：学习通当堂小测</h2>
+        <div class="mx-auto mt-10 flex h-40 w-40 items-center justify-center rounded-full border border-[#E5E0D8] bg-white shadow-sm">
+          <svg width="72" height="72" viewBox="0 0 72 72" fill="none" aria-hidden="true">
+            <rect x="22" y="8" width="28" height="56" rx="6" stroke="#3E5566" stroke-width="2" />
+            <path d="M32 14h8" stroke="#7E9E9C" stroke-width="2" stroke-linecap="round" />
+            <circle cx="36" cy="54" r="2" fill="#E8B4B8" />
+          </svg>
+        </div>
+        <p class="mt-8 text-[18px] leading-9 text-[#444]">请拿出手机，登录学习通，完成本节随堂检测。做错的题目按知识点进入下一次练习，这一次的对错仍单独留档。</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    var page = 0;
+    var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+    var solved = { one: false, two: false };
+    var key = { one: "subject", two: "adverbial" };
+
+    function show(next) {
+      page = Math.max(0, Math.min(slides.length - 1, next));
+      slides.forEach(function (slide, index) {
+        slide.classList.toggle("active", index === page);
+      });
+      document.getElementById("step").textContent = (page + 1) + " / " + slides.length;
+      document.getElementById("bar").style.width = ((page + 1) / slides.length * 100) + "%";
+    }
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "ArrowRight" || event.key === "PageDown") show(page + 1);
+      if (event.key === "ArrowLeft" || event.key === "PageUp") show(page - 1);
+    });
+
+    document.querySelectorAll("[data-gate]").forEach(function (group) {
+      group.addEventListener("click", function (event) {
+        var button = event.target.closest("button");
+        if (!button) return;
+        var gate = group.getAttribute("data-gate");
+        if (solved[gate]) return;
+        var correct = button.getAttribute("data-value") === key[gate];
+        if (correct) {
+          solved[gate] = true;
+          button.classList.add("border-teal", "bg-teal", "text-white");
+          var pop = document.createElement("span");
+          pop.className = "score-pop";
+          pop.textContent = "+10分";
+          group.appendChild(pop);
+          pop.addEventListener("animationend", function () { pop.remove(); });
+          if (solved.one && solved.two) document.getElementById("rule").classList.add("show");
+        } else {
+          button.classList.remove("shake");
+          void button.offsetWidth;
+          button.classList.add("shake", "border-peach", "bg-peach", "text-[#5C3A3E]");
+        }
+      });
+    });
+  </script>
+</body>
+</html>

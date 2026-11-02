@@ -1,0 +1,213 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+/*
+ * 设计令牌（Tailwind v4 通过 @theme 声明，自动生成工具类）
+ * 国风：宣纸、墨色、桃夭、远山黛、金线
+ */
+@theme {
+  /* ---- 国风 ---- */
+  --color-paper: #f8f4ec;
+  --color-ink: #2c2c2c;
+  --color-peach: #f4d0d7;
+  --color-mountain: #b2cdd7;
+  --color-gold: #c9b08a;
+
+  /* ---- 学生端 · 马卡龙（功能色保留，皮肤改走国风） ---- */
+  --color-coral-50: #fff1f0;
+  --color-coral-100: #ffe0dd;
+  --color-coral-300: #ffb3ab;
+  --color-coral-400: #ff8f84;
+  --color-coral-500: #ff6f61;
+  --color-coral-600: #e85a4d;
+
+  --color-mint-50: #effcf6;
+  --color-mint-100: #d6f7e8;
+  --color-mint-300: #9fe8c9;
+  --color-mint-400: #6fd9ae;
+  --color-mint-500: #4cc999;
+  --color-mint-600: #35a87c;
+
+  --color-cream-50: #fffdf3;
+  --color-cream-100: #fff8d6;
+  --color-cream-300: #ffeea3;
+  --color-cream-400: #ffe474;
+  --color-cream-500: #ffd84d;
+  --color-cream-600: #e6bd2a;
+  --color-cream-800: #6b4e12;
+
+  --color-lavender-50: #f7f3ff;
+  --color-lavender-100: #ebe3ff;
+  --color-lavender-300: #cdbbff;
+  --color-lavender-400: #b196ff;
+  --color-lavender-500: #9b7bff;
+  --color-lavender-600: #7f5fe6;
+
+  /* ---- 教师端 · 深蓝（导航仍可用，页面底改为宣纸） ---- */
+  --color-navy-50: #eef2f9;
+  --color-navy-100: #d9e1f1;
+  --color-navy-300: #8fa3cc;
+  --color-navy-500: #3d5a99;
+  --color-navy-600: #2f4a82;
+  --color-navy-700: #243a68;
+  --color-navy-800: #1b2c50;
+  --color-navy-900: #121f3a;
+
+  /* ---- 圆角：册页，比原来的大圆角收一档 ---- */
+  --radius-student: 0.5rem;
+  --radius-student-sm: 0.375rem;
+  --radius-teacher: 0.5rem;
+
+  /* ---- 字体：标题宋体，正文无衬线 ---- */
+  --font-serif: "Noto Serif SC", "LXGW WenKai", "Songti SC", "STSong", serif;
+  --font-kai: "LXGW WenKai", "Noto Serif SC", "KaiTi", serif;
+  --font-rounded: system-ui, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI",
+    "Noto Sans SC", sans-serif;
+  --font-ui: system-ui, "Segoe UI", "PingFang SC", "Microsoft YaHei UI",
+    "Noto Sans SC", sans-serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-ui);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+}
+
+.chapter-reel {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.chapter-reel::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.knowledge-pane {
+  container-type: inline-size;
+}
+
+.knowledge-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: start;
+}
+
+@container (min-width: 40rem) {
+  .knowledge-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .knowledge-grid > li[data-open='true'] {
+    grid-column: 1 / -1;
+  }
+}
+.chapter-focus:focus,
+.chapter-focus:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+h1,
+.book-title {
+  font-family: var(--font-serif);
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+.juxing-board {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  color: #1e293b;
+  background:
+    linear-gradient(90deg, rgba(255, 228, 236, 0.95) 0 76px, transparent 76px),
+    linear-gradient(165deg, #f8eef3 0%, #e7f3df 46%, #c5dbb2 100%);
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.juxing-board.is-board {
+  background: #f4f7f2;
+}
+
+.juxing-board button {
+  touch-action: manipulation;
+}
+
+.board-chip,
+.board-wide,
+.board-card {
+  border: 4px solid #1e293b;
+  border-radius: 1.25rem;
+  background: #fff;
+}
+
+.board-chip {
+  min-height: 4rem;
+  padding: 0.4rem 1.1rem;
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+
+.board-chip-strong,
+.board-wide {
+  background: #fde047;
+  border-color: #92400e;
+}
+
+.board-wide {
+  min-height: 5.25rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.board-card {
+  min-height: 11rem;
+  padding: 1.25rem 1.4rem;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.board-card:active,
+.board-wide:active,
+.board-chip:active {
+  transform: scale(0.98);
+}
+
+.board-sentence {
+  border: 4px solid #1e293b;
+  border-radius: 1.5rem;
+  background: #fff;
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+  font-size: clamp(3rem, 6vw, 5.4rem);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* 册页：去掉厚阴影和彩色描边，改成金丝细边 */
+:where(article, section, div, a, ul, li, main).rounded-student,
+:where(article, section, div, ul, li).rounded-teacher,
+:where(article, section, div, ul).rounded-student-sm {
+  border: 0.5px solid var(--color-gold) !important;
+  box-shadow: none !important;
+  border-radius: 0.5rem;
+}

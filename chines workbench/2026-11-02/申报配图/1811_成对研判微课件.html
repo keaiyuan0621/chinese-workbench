@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>知微追 · 成对研判</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper: "#FBF9F6",
+            ink: "#333333",
+            mute: "#666666",
+            line: "#E5E0D8",
+            peach: "#E8B4B8",
+            peachSoft: "#F8E8EA",
+            teal: "#7E9E9C",
+            tealSoft: "#E7F1F0"
+          },
+          fontFamily: {
+            serif: ['"Songti SC"', '"STSong"', '"Noto Serif SC"', "serif"],
+            sans: ['"PingFang SC"', '"Hiragino Sans GB"', '"Microsoft YaHei"', '"Noto Sans SC"', "sans-serif"]
+          },
+          boxShadow: {
+            card: "0 8px 24px rgba(44, 44, 44, 0.05)"
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    html, body { background: #FBF9F6; }
+    body { -webkit-font-smoothing: antialiased; }
+  </style>
+</head>
+<body class="min-h-screen bg-paper font-sans text-ink">
+  <div class="mx-auto flex min-h-screen w-[1120px] max-w-full flex-col px-10 py-8">
+    <header class="flex items-center justify-between border-b border-line pb-4">
+      <div class="flex items-baseline gap-3">
+        <span class="font-serif text-[22px] tracking-[0.14em]">知微追</span>
+        <span class="text-[14px] text-mute">现代汉语研习工作台</span>
+      </div>
+      <p class="rounded-full border border-line bg-white px-4 py-1.5 text-[13px] tracking-[0.06em] text-mute">当前进度：课中研判</p>
+    </header>
+
+    <main class="mt-8 grid flex-1 grid-cols-1 gap-6 lg:grid-cols-[minmax(0,35fr)_minmax(0,65fr)]">
+      <section class="rounded-xl border border-line bg-white p-7 shadow-sm shadow-card">
+        <h2 class="font-serif text-[20px] tracking-[0.12em]">判定规则</h2>
+        <span class="mt-3 block h-px w-10 bg-teal"></span>
+        <ol class="mt-6 space-y-5 text-[15px] leading-8">
+          <li class="flex gap-3">
+            <span class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-tealSoft text-[13px] text-teal">1</span>
+            <span>有其他话题时，句首处所为状语。</span>
+          </li>
+          <li class="flex gap-3">
+            <span class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-tealSoft text-[13px] text-teal">2</span>
+            <span>无其他话题时，处所短语作主语。</span>
+          </li>
+          <li class="flex gap-3">
+            <span class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-tealSoft text-[13px] text-teal">3</span>
+            <span>介词短语（如在桌子上）不作主语。</span>
+          </li>
+        </ol>
+      </section>
+
+      <section class="rounded-xl border border-line bg-white p-7 shadow-sm shadow-card">
+        <h2 class="font-serif text-[20px] tracking-[0.12em]">成对研判</h2>
+        <span class="mt-3 block h-px w-10 bg-peach"></span>
+
+        <div class="mt-6 space-y-5">
+          <article class="rounded-xl border border-line bg-paper px-6 py-5">
+            <p class="text-[13px] tracking-[0.12em] text-mute">题目一</p>
+            <p class="mt-2 font-serif text-[22px] tracking-[0.06em]">花园里开满了花</p>
+            <p class="mt-1 text-[13px] text-mute">句首「花园里」是什么成分？</p>
+            <div class="mt-5 flex flex-wrap items-center gap-3">
+              <button type="button" class="rounded-lg border border-line bg-white px-5 py-2 text-[15px]">A. 主语</button>
+              <button type="button" class="rounded-lg border border-peach bg-peach px-5 py-2 text-[15px] text-[#5C3A3E]">B. 状语</button>
+              <span class="rounded-full bg-peachSoft px-3 py-1 text-[12px] tracking-[0.08em] text-[#8C4E55]">错误选项</span>
+              <button type="button" class="rounded-lg border border-line bg-white px-5 py-2 text-[15px]">C. 宾语</button>
+            </div>
+          </article>
+
+          <article class="rounded-xl border border-line bg-paper px-6 py-5">
+            <p class="text-[13px] tracking-[0.12em] text-mute">题目二</p>
+            <p class="mt-2 font-serif text-[22px] tracking-[0.06em]">花园里孩子们玩得正高兴</p>
+            <p class="mt-1 text-[13px] text-mute">句首「花园里」是什么成分？</p>
+            <div class="mt-5 flex flex-wrap items-center gap-3">
+              <button type="button" class="rounded-lg border border-line bg-white px-5 py-2 text-[15px]">A. 主语</button>
+              <button type="button" class="rounded-lg border border-teal bg-teal px-5 py-2 text-[15px] text-white">B. 状语</button>
+              <span class="rounded-full bg-tealSoft px-3 py-1 text-[12px] tracking-[0.08em] text-[#3E5C5A]">正确答案</span>
+              <button type="button" class="rounded-lg border border-line bg-white px-5 py-2 text-[15px]">C. 宾语</button>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="mt-8 border-t border-line pt-5 text-center">
+      <p class="text-[15px] leading-7 text-mute">错误选项成为了最具价值的教学资源 —— 教师引导持不同意见的学生陈述理由，在观点交锋中逼近规则。</p>
+    </footer>
+  </div>
+</body>
+</html>

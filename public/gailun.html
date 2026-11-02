@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>课程概述基础练习 - 现代汉语语法概说</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@500;700;900&display=swap');
+
+    body {
+      font-family: 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    .font-kuaile {
+      font-family: 'ZCOOL+KuaiLe', 'Noto Sans SC', cursive, sans-serif;
+    }
+
+    .font-serif-sc {
+      font-family: 'Noto Serif SC', serif;
+    }
+
+    /* 讲台大屏触控3D按键反馈 */
+    .btn-whiteboard {
+      transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2), 0 14px 20px rgba(0, 0, 0, 0.15);
+    }
+    .btn-whiteboard:active {
+      transform: translateY(6px);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2), 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 课件复古纸质感背景 */
+    .board-card {
+      background: linear-gradient(145deg, #fffdf7 0%, #fcf7eb 100%);
+      box-shadow: 0 20px 40px rgba(40, 70, 50, 0.15), inset 0 0 0 3px #ebd9b8;
+    }
+
+    /* 黄廖本标准层次分析：框线与切分阶梯 */
+    .tier-box {
+      border: 3px solid #334155;
+      background-color: #ffffff;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .tier-box::before {
+      content: '';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 10px;
+      background-color: #64748b;
+    }
+
+    @keyframes pop-bounce {
+      0% { transform: scale(0.7); opacity: 0; }
+      70% { transform: scale(1.05); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .pop-animate {
+      animation: pop-bounce 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+    }
+
+    @keyframes soft-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+    .pulse-effect {
+      animation: soft-pulse 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-emerald-100 via-teal-50 to-amber-100 min-h-screen text-slate-900 flex flex-col justify-between overflow-x-hidden p-3 md:p-6">
+
+  <!-- 顶部教室白板工具栏 -->
+  <header class="w-full max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 bg-white/90 backdrop-blur-md px-6 py-4 rounded-3xl border-3 border-emerald-300 shadow-xl">
+    <!-- 标题与版本标注 -->
+    <div class="flex items-center space-x-4">
+      <div class="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-tr from-emerald-600 to-teal-500 rounded-2xl flex items-center justify-center text-white text-3xl shadow-md font-serif-sc">
+        文
+      </div>
+      <div>
+        <h1 class="text-2xl md:text-3xl lg:text-4xl font-black text-emerald-950 tracking-wider font-serif-sc flex items-center gap-3">
+          课程概述基础练习
+          <span class="text-xs md:text-sm font-sans bg-amber-200 text-amber-950 px-3 py-1 rounded-full border border-amber-400 font-bold">
+            语法概说·基础
+          </span>
+        </h1>
+        <p class="text-xs md:text-base text-emerald-800 font-semibold mt-0.5">讲完课程概述后的基础练习 · 点大按钮作答 · 答完马上讲解</p>
+      </div>
+    </div>
+
+    <!-- 右侧功能区 -->
+    <div class="flex items-center space-x-3">
+      <!-- 知识树弹窗 -->
+      <button onclick="toggleKnowledgeModal(true)" class="btn-whiteboard bg-amber-400 hover:bg-amber-300 text-amber-950 border-2 border-amber-500 px-5 py-2.5 rounded-2xl font-black text-xl flex items-center gap-2">
+        <span>📖</span>
+        <span>语法概说宝典</span>
+      </button>
+
+      <!-- 音效切换 -->
+      <button onclick="toggleAudio()" id="audio-toggle-btn" class="bg-teal-100 hover:bg-teal-200 text-teal-900 border-2 border-teal-400 p-3 rounded-2xl font-bold text-2xl active:scale-90 transition-transform" title="音效开关">
+        🔊
+      </button>
+
+      <!-- 全屏白板 -->
+      <button onclick="toggleFullScreen()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-950 border-2 border-emerald-400 p-3 rounded-2xl font-bold text-2xl active:scale-90 transition-transform" title="全屏模式">
+        ⛶
+      </button>
+    </div>
+  </header>
+
+  <!-- 关卡导航与讲台积分榜 -->
+  <div class="w-full max-w-7xl mx-auto my-3 flex flex-wrap items-center justify-between gap-4 px-2">
+    <!-- 关卡切换大按键 -->
+    <div class="flex items-center bg-white/90 border-2 border-emerald-300 rounded-2xl p-1.5 gap-2 shadow-md overflow-x-auto">
+      <button onclick="changeLevel(1)" id="tab-lvl-1" class="px-5 py-2.5 rounded-xl text-lg md:text-2xl font-black transition-all bg-emerald-600 text-white shadow-sm">
+        关卡一：语法是什么
+      </button>
+      <button onclick="changeLevel(2)" id="tab-lvl-2" class="px-5 py-2.5 rounded-xl text-lg md:text-2xl font-black transition-all text-emerald-900 hover:bg-emerald-100">
+        关卡二：性质和特点
+      </button>
+      <button onclick="changeLevel(3)" id="tab-lvl-3" class="px-5 py-2.5 rounded-xl text-lg md:text-2xl font-black transition-all text-emerald-900 hover:bg-emerald-100">
+        关卡三：单位和成分
+      </button>
+    </div>
+
+    <!-- 计分与连胜奖励 -->
+    <div class="flex items-center gap-4 bg-white/90 border-2 border-amber-300 px-5 py-2 rounded-2xl shadow-md">
+      <div class="flex items-center gap-2">
+        <span class="text-3xl">🔥</span>
+        <span class="text-xl md:text-2xl font-black text-amber-900">连胜:</span>
+        <span id="combo-display" class="text-3xl md:text-4xl font-black text-red-600 font-serif-sc">0</span>
+      </div>
+      <div class="w-0.5 h-8 bg-amber-200"></div>
+      <div class="flex items-center gap-2">
+        <span class="text-3xl">⭐</span>
+        <span class="text-xl md:text-2xl font-black text-amber-900">总分:</span>
+        <span id="score-display" class="text-3xl md:text-4xl font-black text-emerald-700 font-serif-sc">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主交互视窗 (白板交互主体) -->
+  <main class="w-full max-w-7xl mx-auto flex-1 flex flex-col justify-center my-2">
+    <div class="board-card rounded-3xl p-6 md:p-10 border-4 border-amber-300 relative flex flex-col justify-between min-h-[520px]">
+      
+      <!-- 题目序号与指导说明 -->
+      <div class="flex items-center justify-between border-b-2 border-amber-300/80 pb-4 mb-4">
+        <div class="flex items-center gap-3">
+          <span id="level-badge" class="bg-emerald-700 text-white font-black px-5 py-1.5 rounded-xl text-xl md:text-2xl shadow-md">
+            关卡一 · 基础辨析
+          </span>
+          <span class="text-slate-700 font-black text-lg md:text-2xl">
+            选出最贴近课件的说法。答完后一起看讲解：
+          </span>
+        </div>
+        <span id="question-index-tag" class="text-emerald-950 font-black text-2xl md:text-3xl font-serif-sc bg-amber-200/80 px-4 py-1 rounded-xl border border-amber-400">
+          第 1 / 5 题
+        </span>
+      </div>
+
+      <!-- 核心大字句子呈现区 (教室大屏34px-44px特大黑体) -->
+      <div class="my-auto py-8 px-6 bg-amber-50/90 rounded-3xl border-3 border-dashed border-amber-400 text-center relative shadow-inner">
+        <span class="absolute -top-4 left-8 bg-amber-500 text-white text-base md:text-lg font-black px-4 py-0.5 rounded-full shadow">
+          课堂提问
+        </span>
+        <div id="sentence-main-box" class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-950 tracking-wider font-serif-sc leading-snug py-2">
+          语法是语言单位的结构规律。
+        </div>
+      </div>
+
+      <!-- 选项按钮网格 (按键文字24px-28px，大触控尺寸) -->
+      <div id="options-btn-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mt-6">
+        <!-- 动态生成选项按键 -->
+      </div>
+    </div>
+  </main>
+
+  <!-- 底部状态说明条 -->
+  <footer class="w-full max-w-7xl mx-auto my-2 flex items-center justify-between text-slate-700 px-4">
+    <div class="flex items-center gap-2">
+      <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 animate-ping"></span>
+      <span class="text-base md:text-lg font-bold text-emerald-900">学生直接点大屏选项 · 答完后老师对照课件讲解</span>
+    </div>
+    <button onclick="resetCurrentLevel()" class="bg-white/90 hover:bg-white text-slate-800 border-2 border-slate-400 px-5 py-1.5 rounded-xl font-bold text-lg shadow-sm active:scale-95 transition-all">
+      🔄 重做本关
+    </button>
+  </footer>
+
+  <!-- ================= 核心分析大看板浮层 (答对/答错均展示，黄廖第七版框式切分) ================= -->
+  <div id="analysis-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6 hidden">
+    <div class="bg-gradient-to-b from-amber-50 via-white to-amber-50 rounded-3xl max-w-6xl w-full border-4 border-amber-400 shadow-2xl p-6 md:p-8 max-h-[92vh] overflow-y-auto pop-animate flex flex-col justify-between">
+      
+      <!-- 结果状态横幅（答对：大笑脸+赞扬；答错：温和提示） -->
+      <div id="feedback-banner" class="flex items-center justify-between p-4 md:p-5 rounded-2xl mb-6 shadow-md border-2">
+        <div class="flex items-center gap-4">
+          <span id="banner-emoji" class="text-5xl md:text-6xl">😆</span>
+          <div>
+            <h3 id="banner-title" class="text-2xl md:text-3xl font-black font-serif-sc">
+              太棒了！火眼金睛，完全正确！👏
+            </h3>
+            <p id="banner-subtitle" class="text-lg md:text-xl font-bold mt-1">
+              答对了。我们把课件上的这句话再讲一遍：
+            </p>
+          </div>
+        </div>
+        <div id="banner-badge" class="hidden md:flex text-xl font-black px-5 py-2 rounded-xl text-white bg-emerald-600 shadow">
+          得分 +20
+        </div>
+      </div>
+
+      <!-- 核心重点一：黄廖第七版【直接成分框式层次切分图】 -->
+      <div class="bg-white rounded-2xl p-5 md:p-7 border-3 border-slate-300 shadow-sm mb-6">
+        <div class="flex items-center justify-between border-b-2 border-slate-200 pb-3 mb-5">
+          <div class="flex items-center gap-2">
+            <span class="text-3xl">📐</span>
+            <h4 class="text-2xl md:text-3xl font-black text-slate-900 font-serif-sc">
+              对照课件 · 随堂讲解
+            </h4>
+          </div>
+          <span class="text-base md:text-lg bg-teal-100 text-teal-950 font-black px-4 py-1 rounded-full border border-teal-300">
+            基础内容 · 当堂讲清
+          </span>
+        </div>
+
+        <!-- 层次分析图形视窗 (大字号、横向自适应、下行多层结构) -->
+        <div id="tree-diagram-container" class="overflow-x-auto py-4 px-2 flex flex-col items-center">
+          <!-- 动态渲染切分图 -->
+        </div>
+      </div>
+
+      <!-- 核心重点二：名师解题思路 & 语法小结 (大字号 >= 22px-26px) -->
+      <div class="bg-amber-100/70 border-3 border-amber-300 rounded-2xl p-5 md:p-6 mb-6">
+        <div class="flex items-center gap-2 text-amber-950 text-2xl md:text-3xl font-black mb-3 font-serif-sc">
+          <span>💡</span> 老师可以这样讲：
+        </div>
+        <p id="analysis-logic-text" class="text-slate-900 text-xl md:text-2xl font-bold leading-relaxed">
+          <!-- 动态注入深入细致的语法判断思路 -->
+        </p>
+      </div>
+
+      <!-- 底部控制按键 -->
+      <div class="flex flex-wrap gap-4 pt-2">
+        <button onclick="handleModalNext()" class="btn-whiteboard flex-1 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-black text-2xl md:text-3xl py-4 rounded-2xl border-2 border-emerald-400">
+          进入下一题 ➜
+        </button>
+        <button onclick="closeAnalysisModalOnly()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-black text-xl md:text-2xl px-8 py-4 rounded-2xl">
+          返回原题
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 关卡全通关大捷弹窗 -->
+  <div id="victory-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-gradient-to-b from-amber-50 via-white to-amber-100 rounded-3xl p-8 max-w-xl w-full border-4 border-yellow-400 shadow-2xl text-center pop-animate">
+      <div class="text-8xl mb-3 animate-bounce">🏆</div>
+      <h2 class="text-4xl md:text-5xl font-black text-amber-950 font-serif-sc mb-2">
+        闯关大捷！满载而归！
+      </h2>
+      <p id="victory-level-desc" class="text-2xl font-bold text-emerald-800 mb-5">
+        同学们已经攻克了本关的所有难点！
+      </p>
+
+      <div class="bg-white/90 border-2 border-amber-300 rounded-2xl p-5 mb-6 text-xl md:text-2xl font-black text-slate-800 space-y-2">
+        <div>全班累计积分：<span id="final-score-val" class="text-4xl text-emerald-600 font-serif-sc">0</span></div>
+        <div class="text-amber-600 text-3xl">⭐⭐⭐⭐⭐</div>
+      </div>
+
+      <button onclick="advanceNextLevel()" id="victory-action-btn" class="btn-whiteboard w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-2xl md:text-3xl py-4 rounded-2xl border-2 border-emerald-300">
+        开启下一关挑战 🚀
+      </button>
+    </div>
+  </div>
+
+  <!-- 句型体系速查宝典 (与教材第7版完全一致) -->
+  <div id="knowledge-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-stone-50 rounded-3xl max-w-5xl w-full border-4 border-emerald-500 shadow-2xl p-6 md:p-8 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b-2 border-emerald-300 pb-4 mb-6">
+        <div class="flex items-center gap-3">
+          <span class="text-4xl">🌳</span>
+          <h2 class="text-2xl md:text-4xl font-black text-emerald-950 font-serif-sc">
+            语法概说·知识图谱
+          </h2>
+        </div>
+        <button onclick="toggleKnowledgeModal(false)" class="text-slate-500 hover:text-slate-900 text-4xl font-bold p-2">
+          ✕
+        </button>
+      </div>
+
+      <!-- 架构图谱 -->
+      <div class="space-y-5">
+        <div class="border-3 border-emerald-400 bg-emerald-50/80 p-5 rounded-2xl">
+          <div class="text-2xl font-black text-emerald-950 mb-3">一、语法是什么</div>
+          <p class="text-xl font-bold text-slate-800 leading-relaxed">语法是语言单位的结构规律，也就是组合规则。语音是形式，词汇是材料，语法管怎么组合。</p>
+        </div>
+        <div class="border-3 border-sky-400 bg-sky-50/80 p-5 rounded-2xl">
+          <div class="text-2xl font-black text-sky-950 mb-3">二、语法研究什么</div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xl font-bold">
+            <div class="bg-white p-4 rounded-xl border border-sky-200">词法：词怎么构成、怎么分类<br>句法：短语和句子怎么组合</div>
+            <div class="bg-white p-4 rounded-xl border border-sky-200">组合：次序不能乱<br>替换（聚合）：能换的位置，规则不变</div>
+            <div class="bg-white p-4 rounded-xl border border-sky-200">句法：单位之间的关系<br>语义：和客观世界的关系<br>语用：和语境、说话人的关系</div>
+          </div>
+        </div>
+        <div class="border-3 border-amber-400 bg-amber-50/80 p-5 rounded-2xl">
+          <div class="text-2xl font-black text-amber-950 mb-3">三、语法的性质</div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xl font-bold text-center">
+            <div class="bg-white p-4 rounded-xl">抽象性<br><span class="text-base text-slate-600">从许多事实里抽出规则</span></div>
+            <div class="bg-white p-4 rounded-xl">稳固性<br><span class="text-base text-slate-600">变得比语音、词汇慢</span></div>
+            <div class="bg-white p-4 rounded-xl">民族性<br><span class="text-base text-slate-600">不同语言有自己的特点</span></div>
+          </div>
+        </div>
+        <div class="border-3 border-teal-400 bg-teal-50/80 p-5 rounded-2xl">
+          <div class="text-2xl font-black text-teal-950 mb-3">四、汉语语法的四个特点</div>
+          <ol class="list-decimal pl-8 text-xl font-bold space-y-2 text-slate-900">
+            <li>缺少严格意义的形态变化</li>
+            <li>词类和句法成分不是一一对应</li>
+            <li>词、短语、句子的构造规则基本一致</li>
+            <li>语序和虚词是表达语法意义的主要手段</li>
+          </ol>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="border-3 border-indigo-300 bg-white p-5 rounded-2xl">
+            <div class="text-2xl font-black text-indigo-950 mb-3">五、四种语法单位</div>
+            <p class="text-xl font-bold leading-relaxed">语素 → 词 → 短语 → 句子<br>语素最小，句子才有句调。</p>
+          </div>
+          <div class="border-3 border-rose-300 bg-white p-5 rounded-2xl">
+            <div class="text-2xl font-black text-rose-950 mb-3">六、句法成分成对出现</div>
+            <p class="text-xl font-bold leading-relaxed">主语—谓语　动语—宾语<br>定语（　）—中心语　状语［　］—中心语<br>中心语—补语〈　〉</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 text-center">
+        <button onclick="toggleKnowledgeModal(false)" class="btn-whiteboard bg-emerald-700 hover:bg-emerald-600 text-white font-black text-2xl px-12 py-3.5 rounded-2xl">
+          关闭宝典 · 继续挑战
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ================= 纯原声合成音效（Web Audio API 无需外部网络） ================= */
+    class WhiteboardAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.soundEnabled = true;
+      }
+      init() {
+        if (!this.ctx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (AC) this.ctx = new AC();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playCorrectDing() {
+        if (!this.soundEnabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        // 清脆悦耳双重叮咚音
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(659.25, now);
+        osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.15);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.5);
+      }
+      playWrongBuzzer() {
+        if (!this.soundEnabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(280, now);
+        osc.frequency.linearRampToValueAtTime(200, now + 0.25);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+      playFanfare() {
+        if (!this.soundEnabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.5];
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+          gain.gain.setValueAtTime(0.28, now + idx * 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.4);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + idx * 0.1);
+          osc.stop(now + idx * 0.1 + 0.4);
+        });
+      }
+    }
+    const audioEngine = new WhiteboardAudioEngine();
+
+    /* ================= 题库数据：黄廖本第七版标准框式层次切分定义 ================= */
+const QUESTION_BANK = {
+      level1: [
+        {
+          sentence: "语法是什么？",
+          answer: "语言单位的结构规律",
+          options: ["语言单位的结构规律", "记录声音的字母表"],
+          cards: [
+            { k: "课件原话", v: "语法是语言单位的结构规律，就是组成词、短语、句子的规则。" },
+            { k: "顺口记", v: "语音是形式，词汇是材料，语法是组合规则。" }
+          ],
+          logic: "先把三个要素分开。问“怎么组合成话”，答案就是语法，不要答成语音。"
+        },
+        {
+          sentence: "“张三找李四”和“李四找张三”，字一样，意思为什么不一样？",
+          answer: "组合的次序不同",
+          options: ["组合的次序不同", "用的汉字完全不同"],
+          cards: [
+            { k: "课件四句", v: "张三找李四。／李四找张三。／张三找的李四。／张三找李四的。" },
+            { k: "讲法", v: "同样的词，次序或虚词一变，结构就变。这就是组合规则。" }
+          ],
+          logic: "四个句子用的字差不多，变的是谁在前、谁在后，以及“的”放在哪里。"
+        },
+        {
+          sentence: "“他看完了小说”，也能说“看完了电影、戏剧、展览”。这是什么规则？",
+          answer: "替换规则",
+          options: ["替换规则", "句子可以随便乱写"],
+          cards: [
+            { k: "课件例子", v: "小说可以换成电影、戏剧、展览；“看”也可以换成买、卖、谈。" },
+            { k: "知识图谱", v: "能互相替换、规则不变的这一类，也叫聚合。" }
+          ],
+          logic: "位置不变，换上去的词还能说，这就是替换。不是把句子拆散重写。"
+        },
+        {
+          sentence: "“我吃饭了”里，“我”是动作发出者，“饭”是动作承受者。这是在看什么？",
+          answer: "语义",
+          options: ["语义", "语音"],
+          cards: [
+            { k: "三个平面", v: "句法看单位之间的关系。语义看和客观世界的关系。语用看语境和说话人。" },
+            { k: "本句", v: "施事、受事是语义。“我喝饭了”语义上不搭配。" }
+          ],
+          logic: "谁发出动作、谁承受动作，讲的是意思和现实的关系，所以是语义。"
+        },
+        {
+          sentence: "同一句“我吃饭了”，可以说“我不饿了”，也可以说“我正要去吃”。这是什么？",
+          answer: "语用",
+          options: ["语用", "词的构成规则"],
+          cards: [
+            { k: "课件原话", v: "语用研究语言成分与语境、说话人的关系。" },
+            { k: "讲法", v: "句子没变，说话的场合和用意变了。" }
+          ],
+          logic: "词法管词怎么构成。这里句子相同、用意不同，是语用。"
+        }
+      ],
+      level2: [
+        {
+          sentence: "从“花、书、笔”许多例子里，抽出“名词可以作主语”。这是语法的什么性质？",
+          answer: "抽象性",
+          options: ["抽象性", "稳固性", "民族性", "临时性"],
+          cards: [
+            { k: "定义", v: "语法是从众多语言事实中抽象出来的规则系统。" },
+            { k: "课件两类", v: "花、书、笔……指称事物，是名词。看、说、写……表示动作，是动词。" }
+          ],
+          logic: "不是只记一个词，而是从很多词里抽出一条规则，这就是抽象性。"
+        },
+        {
+          sentence: "甲骨文“今一月雨”，现在说“一月份下雨”，都是主谓。这说明什么？",
+          answer: "稳固性",
+          options: ["稳固性", "抽象性", "民族性", "语法天天都在大变"],
+          cards: [
+            { k: "课件对照", v: "卜辞：今一月雨？　现代：一月份下雨吗？结构规律都是主谓。" },
+            { k: "讲法", v: "语法变得比语音、词汇慢，所以叫稳固性。" }
+          ],
+          logic: "隔了这么多年，主谓这条规则还在，就是稳固，不是天天大变。"
+        },
+        {
+          sentence: "汉语说“我写字”，日语常常说“我字写”。这主要说明什么？",
+          answer: "民族性",
+          options: ["民族性", "稳固性", "抽象性", "两种语言完全一样"],
+          cards: [
+            { k: "课件对照", v: "我写字（汉语）。我字写（日语、韩语）。我们努力学习／We study hard。" },
+            { k: "讲法", v: "不同语言有同有异。自己的特点就是民族性。" }
+          ],
+          logic: "同样的意思，语序不一样，所以不是“完全一样”，而是民族性。"
+        },
+        {
+          sentence: "汉语说“三本书”，英语要说 three books。汉语名词一般不加 -s。这是哪一特点？",
+          answer: "缺少严格意义的形态变化",
+          options: ["缺少严格意义的形态变化", "语序和虚词不重要", "词类和句法成分一一对应", "汉语没有语法"],
+          cards: [
+            { k: "四个特点里的第一条", v: "形态是一个词表示不同语法意义的形式变化。汉语缺少严格意义的这种变化。" },
+            { k: "课件例子", v: "英语用 books 表示复数。汉语靠“三本”，不靠词尾。" }
+          ],
+          logic: "没有 -s 这种词形变化，就选第一条。语序和虚词在汉语里恰恰很重要。"
+        },
+        {
+          sentence: "“看完了小说”能说，“看了完小说”不能说。汉语主要靠什么表示这种差别？",
+          answer: "语序和虚词",
+          options: ["语序和虚词", "词内部的形态变化", "字母的大小写", "句子写得长还是短"],
+          cards: [
+            { k: "四个特点里的第四条", v: "语序和虚词是表达语法意义的主要手段。" },
+            { k: "课件原句", v: "能说：他看完了小说。不能说：他看了完小说。小说看完了他。" }
+          ],
+          logic: "“完”必须放在“看”和“了”的中间。位置错了，句子就不成立。这是语序。"
+        }
+      ],
+      level3: [
+        {
+          sentence: "语言中最小的音义结合体，基本作用是构词。它是？",
+          answer: "语素",
+          options: ["语素", "词", "短语", "句子"],
+          cards: [
+            { k: "四种单位", v: "语素、词、短语、句子。由小到大。" },
+            { k: "课件定义", v: "语素是语言中最小的音义结合体，基本作用是构词。" }
+          ],
+          logic: "最小、用来构词，就是语素。词已经能独立运用，比语素大。"
+        },
+        {
+          sentence: "最小的、能够独立运用的语言单位是？",
+          answer: "词",
+          options: ["词", "语素", "短语", "句子"],
+          cards: [
+            { k: "课件定义", v: "词是最小的能够独立运用的语言单位，用来组织短语和句子。" },
+            { k: "和语素的差别", v: "语素只管构词。词可以拿来组短语、造句。" }
+          ],
+          logic: "题目里有“独立运用”，就选词，不要选语素。"
+        },
+        {
+          sentence: "由词组成，还没有句调。它是？",
+          answer: "短语",
+          options: ["短语", "语素", "句子", "语音"],
+          cards: [
+            { k: "课件定义", v: "短语由词组成，没有句调，是造句的备用单位。" },
+            { k: "和句子的差别", v: "大多数短语加上句调，才能成为句子。" }
+          ],
+          logic: "已经由词组成，但还没有句调，所以是短语，不是句子。"
+        },
+        {
+          sentence: "有一个语调，能表达相对完整的意思，前后还有隔离性停顿。它是？",
+          answer: "句子",
+          options: ["句子", "语素", "词", "短语"],
+          cards: [
+            { k: "课件定义", v: "句子具有一个语调，能够表达一个相对完整的意思，前后有隔离性停顿。" },
+            { k: "例子", v: "“全体同学都做完了语法作业。”这是句子。" }
+          ],
+          logic: "看到“语调”和“停顿”，就选句子。"
+        },
+        {
+          sentence: "“（语法）作业”里，圆括号标出的“语法”是什么成分？",
+          answer: "定语",
+          options: ["定语", "状语", "补语", "谓语"],
+          cards: [
+            { k: "课件符号", v: "（　）定语　［　］状语　〈　〉补语" },
+            { k: "成对关系", v: "定语和中心语是一对，修饰限制，叫定中关系。例如（语法）作业。" }
+          ],
+          logic: "圆括号是定语。方括号才是状语，尖括号才是补语。定语对着中心语。"
+        }
+      ]
+    };
+
+    let currentLvl = 1;
+    let currentIdx = 0;
+    let totalScore = 0;
+    let comboStreak = 0;
+
+    const PRAISE_QUOTES = [
+      "太棒了！火眼金睛，完全正确！👏",
+      "精彩绝伦！概念理解得非常透彻！🌟",
+      "登峰造极！精准无误，智慧星+1！🏆",
+      "讲得很清楚！基础内容掌握了！✨"
+    ];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderQuestion();
+    });
+
+    // 切换关卡
+    function changeLevel(lvl) {
+      currentLvl = lvl;
+      currentIdx = 0;
+      updateLevelTabs();
+      renderQuestion();
+    }
+
+    function updateLevelTabs() {
+      for (let i = 1; i <= 3; i++) {
+        const tab = document.getElementById(`tab-lvl-${i}`);
+        if (i === currentLvl) {
+          tab.className = "px-5 py-2.5 rounded-xl text-lg md:text-2xl font-black transition-all bg-emerald-700 text-white shadow-md scale-105";
+        } else {
+          tab.className = "px-5 py-2.5 rounded-xl text-lg md:text-2xl font-black transition-all text-emerald-950 hover:bg-emerald-100";
+        }
+      }
+      const lvlBadges = {
+        1: "关卡一 · 语法是什么",
+        2: "关卡二 · 性质和特点",
+        3: "关卡三 · 单位和成分"
+      };
+      document.getElementById('level-badge').innerText = lvlBadges[currentLvl];
+    }
+
+    // 渲染题目
+    function renderQuestion() {
+      const qList = QUESTION_BANK[`level${currentLvl}`];
+      const q = qList[currentIdx];
+
+      document.getElementById('question-index-tag').innerText = `第 ${currentIdx + 1} / ${qList.length} 题`;
+      document.getElementById('sentence-main-box').innerText = q.sentence;
+
+      // 渲染选项 (超大按钮，24px-28px字号)
+      const grid = document.getElementById('options-btn-grid');
+      grid.innerHTML = '';
+
+      const btnStyles = [
+        "from-blue-600 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 border-blue-400",
+        "from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 border-emerald-400",
+        "from-amber-600 to-orange-700 hover:from-amber-500 hover:to-orange-600 border-amber-400",
+        "from-purple-600 to-pink-700 hover:from-purple-500 hover:to-pink-600 border-purple-400"
+      ];
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        const color = btnStyles[idx % btnStyles.length];
+        btn.className = `btn-whiteboard w-full bg-gradient-to-r ${color} text-white font-black text-2xl sm:text-3xl md:text-3xl py-6 px-6 rounded-2xl border-2 flex items-center justify-between shadow-lg`;
+        btn.innerHTML = `
+          <span class="flex items-center gap-4">
+            <span class="w-11 h-11 rounded-full bg-white/20 flex items-center justify-center text-2xl font-mono">${String.fromCharCode(65 + idx)}</span>
+            <span>${opt}</span>
+          </span>
+          <span class="text-3xl">👉</span>
+        `;
+        btn.onclick = () => onSelectOption(opt);
+        grid.appendChild(btn);
+      });
+    }
+
+    // 选项选择与判定
+    function onSelectOption(chosen) {
+      const q = QUESTION_BANK[`level${currentLvl}`][currentIdx];
+      const isCorrect = (chosen === q.answer);
+
+      // 横幅与状态元素
+      const banner = document.getElementById('feedback-banner');
+      const emoji = document.getElementById('banner-emoji');
+      const title = document.getElementById('banner-title');
+      const sub = document.getElementById('banner-subtitle');
+      const badge = document.getElementById('banner-badge');
+
+      if (isCorrect) {
+        audioEngine.playCorrectDing();
+        triggerConfettiRain();
+        totalScore += 20;
+        comboStreak += 1;
+        updateScoreStats();
+
+        banner.className = "flex items-center justify-between p-4 md:p-5 rounded-2xl mb-6 shadow-md border-3 border-emerald-400 bg-emerald-100 text-emerald-950";
+        emoji.innerText = "😆";
+        title.innerText = PRAISE_QUOTES[Math.floor(Math.random() * PRAISE_QUOTES.length)];
+        sub.innerText = `这题就是【${q.answer}】。连胜 ${comboStreak}。下面用课件上的话讲清楚：`;
+        badge.classList.remove('hidden');
+      } else {
+        audioEngine.playWrongBuzzer();
+        comboStreak = 0;
+        updateScoreStats();
+
+        banner.className = "flex items-center justify-between p-4 md:p-5 rounded-2xl mb-6 shadow-md border-3 border-rose-300 bg-rose-100 text-rose-950";
+        emoji.innerText = "🧐";
+        title.innerText = "没关系，我们对照课件再看一遍。";
+        sub.innerText = `这题应选【${q.answer}】。你点的是「${chosen}」。看下面的讲解：`;
+        badge.classList.add('hidden');
+      }
+
+      // 无论对错，渲染黄廖本第七版标准框式层次图
+      renderHuangLiaoHierarchyTree(q);
+
+      // 注入名师思路
+      document.getElementById('analysis-logic-text').innerText = q.logic;
+
+      // 展开大看板
+      document.getElementById('analysis-modal').classList.remove('hidden');
+    }
+
+    // 渲染黄伯荣廖序东第七版框式层次切分图
+    function renderHuangLiaoHierarchyTree(q) {
+      const container = document.getElementById('tree-diagram-container');
+      container.innerHTML = '';
+      const treeCard = document.createElement('div');
+      treeCard.className = "w-full max-w-5xl flex flex-col gap-4";
+      (q.cards || []).forEach(card => {
+        const row = document.createElement('div');
+        row.className = "bg-white border-3 border-slate-800 rounded-2xl p-5 shadow-md";
+        row.innerHTML = `
+          <div class="text-xl md:text-2xl font-black text-emerald-800 mb-2">${card.k}</div>
+          <div class="text-2xl md:text-3xl font-black text-slate-950 leading-relaxed font-serif-sc">${card.v}</div>
+        `;
+        treeCard.appendChild(row);
+      });
+      container.appendChild(treeCard);
+    }
+
+    // 模态框点击“进入下一题”
+    function handleModalNext() {
+      document.getElementById('analysis-modal').classList.add('hidden');
+      const qList = QUESTION_BANK[`level${currentLvl}`];
+      if (currentIdx + 1 < qList.length) {
+        currentIdx++;
+        renderQuestion();
+      } else {
+        // 当前关卡顺利通关
+        showLevelVictory();
+      }
+    }
+
+    function closeAnalysisModalOnly() {
+      document.getElementById('analysis-modal').classList.add('hidden');
+    }
+
+    // 关卡通关结算
+    function showLevelVictory() {
+      audioEngine.playFanfare();
+      triggerConfettiRain();
+      setTimeout(triggerConfettiRain, 500);
+
+      document.getElementById('final-score-val').innerText = totalScore;
+      const vDesc = document.getElementById('victory-level-desc');
+      const vBtn = document.getElementById('victory-action-btn');
+
+      if (currentLvl < 3) {
+        vDesc.innerText = `第 ${currentLvl} 关的基础内容练完了。下一关仍然是基础题。`;
+        vBtn.innerText = `开启第 ${currentLvl + 1} 关挑战 🚀`;
+        vBtn.onclick = () => {
+          document.getElementById('victory-modal').classList.add('hidden');
+          changeLevel(currentLvl + 1);
+        };
+      } else {
+        vDesc.innerText = "课程概述的基础练习做完了。语法是什么、有什么性质、单位和成对成分，都可以再讲一遍。";
+        vBtn.innerText = "重新玩转全套题目 🌟";
+        vBtn.onclick = () => {
+          document.getElementById('victory-modal').classList.add('hidden');
+          changeLevel(1);
+        };
+      }
+
+      document.getElementById('victory-modal').classList.remove('hidden');
+    }
+
+    function advanceNextLevel() {
+      document.getElementById('victory-modal').classList.add('hidden');
+      if (currentLvl < 3) {
+        changeLevel(currentLvl + 1);
+      } else {
+        changeLevel(1);
+      }
+    }
+
+    function resetCurrentLevel() {
+      currentIdx = 0;
+      comboStreak = 0;
+      updateScoreStats();
+      renderQuestion();
+    }
+
+    function updateScoreStats() {
+      document.getElementById('score-display').innerText = totalScore;
+      document.getElementById('combo-display').innerText = comboStreak;
+    }
+
+    // Canvas 彩色撒花动画
+    function triggerConfettiRain() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 150,
+          spread: 90,
+          origin: { y: 0.6 },
+          colors: ['#059669', '#d97706', '#2563eb', '#db2777', '#7c3aed']
+        });
+      }
+    }
+
+    // 句型宝典模态框
+    function toggleKnowledgeModal(show) {
+      const modal = document.getElementById('knowledge-modal');
+      if (show) {
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    // 音效开关
+    function toggleAudio() {
+      audioEngine.soundEnabled = !audioEngine.soundEnabled;
+      const btn = document.getElementById('audio-toggle-btn');
+      btn.innerText = audioEngine.soundEnabled ? "🔊" : "🔇";
+    }
+
+    // 全屏白板模式
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.warn("全屏受限:", err);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+  </script>
+</body>
+</html>

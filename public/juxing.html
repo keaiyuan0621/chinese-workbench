@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>汉语句型与层次分析大闯关 - 黄廖本第七版白板教学系统</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@500;700;900&display=swap');
+
+    body {
+      font-family: 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    .font-kuaile {
+      font-family: 'ZCOOL+KuaiLe', 'Noto Sans SC', cursive, sans-serif;
+    }
+
+    .font-serif-sc {
+      font-family: 'Noto Serif SC', serif;
+    }
+
+    /* 讲台大屏触控3D按键反馈 */
+    .btn-whiteboard {
+      transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2), 0 14px 20px rgba(0, 0, 0, 0.15);
+    }
+    .btn-whiteboard:active {
+      transform: translateY(6px);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2), 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 课件复古纸质感背景 */
+    .board-card {
+      background: linear-gradient(145deg, #fffdf7 0%, #fcf7eb 100%);
+      box-shadow: 0 20px 40px rgba(40, 70, 50, 0.15), inset 0 0 0 3px #ebd9b8;
+    }
+
+    /* 黄廖本标准层次分析：框线与切分阶梯 */
+    .tier-box {
+      border: 3px solid #334155;
+      background-color: #ffffff;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .tier-box::before {
+      content: '';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 10px;
+      background-color: #64748b;
+    }
+
+    @keyframes pop-bounce {
+      0% { transform: scale(0.7); opacity: 0; }
+      70% { transform: scale(1.05); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .pop-animate {
+      animation: pop-bounce 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+    }
+
+    @keyframes soft-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+    .pulse-effect {
+      animation: soft-pulse 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-emerald-100 via-teal-50 to-amber-100 min-h-screen text-slate-900 flex flex-col justify-between overflow-x-hidden p-3 md:p-6">
+
+  <!-- 顶部教室白板工具栏 -->
+  <header class="w-full max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 bg-white/90 backdrop-blur-md px-6 py-4 rounded-3xl border-3 border-emerald-300 shadow-xl">
+    <!-- 标题与版本标注 -->
+    <div class="flex items-center space-x-4">
+      <div class="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-tr from-emerald-600 to-teal-500 rounded-2xl flex items-center justify-center text-white text-3xl shadow-md font-serif-sc">
+        文
+      </div>
+      <div>
+        <h1 class="text-2xl md:text-3xl lg:text-4xl font-black text-emerald-950 tracking-wider font-serif-sc flex items-center gap-3">
+          汉语句型与层次分析大闯关
+          <span class="text-xs md:text-sm font-sans bg-amber-200 text-amber-950 px-3 py-1 rounded-full border border-amber-400 font-bold">
+            黄廖本·第七版标准
+          </span>
+        </h1>
+        <p class="text-xs md:text-base text-emerald-800 font-semibold mt-0.5">面向多媒体大屏互动教学 · 点击或触控作答 · 即时框式层次图解</p>
+      </div>
+    </div>
+
+    <!-- 右侧功能区 -->
+    <div class="flex items-center space-x-3">
+      <!-- 知识树弹窗 -->
+      <button onclick="toggleKnowledgeModal(true)" class="btn-whiteboard bg-amber-400 hover:bg-amber-300 text-amber-950 border-2 border-amber-500 px-5 py-2.5 rounded-2xl font-black text-xl flex items-center gap-2">
+        <span>📖</span>
+        <span>句型分类宝典</span>
+      </button>
+
+      <!-- 音效切换 -->
+      <button onclick="toggleAudio()" id="audio-toggle-btn" class="bg-teal-100 hover:bg-teal-200 text-teal-900 border-2 border-teal-400 p-3 rounded-2xl font-bold text-2xl active:scale-90 transition-transform" title="音效开关">
+        🔊
+      </button>
+
+      <!-- 全屏白板 -->
+      <button onclick="toggleFullScreen()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-950 border-2 border-emerald-400 p-3 rounded-2xl font-bold text-2xl active:scale-90 transition-transform" title="全屏模式">
+        ⛶
+      </button>
+    </div>
+  </header>
+
+  <!-- 关卡导航与讲台积分榜 -->
+  <div class="w-full max-w-7xl mx-auto my-3 flex flex-wrap items-center justify-between gap-4 px-2">
+    <!-- 关卡切换大按键 -->
+    <div class="flex items-center bg-white/90 border-2 border-emerald-300 rounded-2xl p-1.5 gap-2 shadow-md overflow-x-auto">
+      <button onclick="changeLevel(1)" id="tab-lvl-1" class="px-5 py-2.5 rounded-xl text-lg md:text-2xl font-black transition-all bg-emerald-600 text-white shadow-sm">
+        关卡一：主谓 VS 非主谓
+      </button>
+      <button onclick="changeLevel(2)" id="tab-lvl-2" class="px-5 py-2.5 rounded-xl text-lg md:text-2xl font-black transition-all text-emerald-900 hover:bg-emerald-100">
+        关卡二：主谓句精深细分
+      </button>
+      <button onclick="changeLevel(3)" id="tab-lvl-3" class="px-5 py-2.5 rounded-xl text-lg md:text-2xl font-black transition-all text-emerald-900 hover:bg-emerald-100">
+        关卡三：非主谓句大挑战
+      </button>
+    </div>
+
+    <!-- 计分与连胜奖励 -->
+    <div class="flex items-center gap-4 bg-white/90 border-2 border-amber-300 px-5 py-2 rounded-2xl shadow-md">
+      <div class="flex items-center gap-2">
+        <span class="text-3xl">🔥</span>
+        <span class="text-xl md:text-2xl font-black text-amber-900">连胜:</span>
+        <span id="combo-display" class="text-3xl md:text-4xl font-black text-red-600 font-serif-sc">0</span>
+      </div>
+      <div class="w-0.5 h-8 bg-amber-200"></div>
+      <div class="flex items-center gap-2">
+        <span class="text-3xl">⭐</span>
+        <span class="text-xl md:text-2xl font-black text-amber-900">总分:</span>
+        <span id="score-display" class="text-3xl md:text-4xl font-black text-emerald-700 font-serif-sc">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主交互视窗 (白板交互主体) -->
+  <main class="w-full max-w-7xl mx-auto flex-1 flex flex-col justify-center my-2">
+    <div class="board-card rounded-3xl p-6 md:p-10 border-4 border-amber-300 relative flex flex-col justify-between min-h-[520px]">
+      
+      <!-- 题目序号与指导说明 -->
+      <div class="flex items-center justify-between border-b-2 border-amber-300/80 pb-4 mb-4">
+        <div class="flex items-center gap-3">
+          <span id="level-badge" class="bg-emerald-700 text-white font-black px-5 py-1.5 rounded-xl text-xl md:text-2xl shadow-md">
+            关卡一 · 基础辨析
+          </span>
+          <span class="text-slate-700 font-black text-lg md:text-2xl">
+            请指出该句所属句型，并查看直接成分层次切分：
+          </span>
+        </div>
+        <span id="question-index-tag" class="text-emerald-950 font-black text-2xl md:text-3xl font-serif-sc bg-amber-200/80 px-4 py-1 rounded-xl border border-amber-400">
+          第 1 / 5 题
+        </span>
+      </div>
+
+      <!-- 核心大字句子呈现区 (教室大屏34px-44px特大黑体) -->
+      <div class="my-auto py-8 px-6 bg-amber-50/90 rounded-3xl border-3 border-dashed border-amber-400 text-center relative shadow-inner">
+        <span class="absolute -top-4 left-8 bg-amber-500 text-white text-base md:text-lg font-black px-4 py-0.5 rounded-full shadow">
+          分析语句
+        </span>
+        <div id="sentence-main-box" class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-950 tracking-wider font-serif-sc leading-snug py-2">
+          窗下一幅繁华的街景。
+        </div>
+      </div>
+
+      <!-- 选项按钮网格 (按键文字24px-28px，大触控尺寸) -->
+      <div id="options-btn-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mt-6">
+        <!-- 动态生成选项按键 -->
+      </div>
+    </div>
+  </main>
+
+  <!-- 底部状态说明条 -->
+  <footer class="w-full max-w-7xl mx-auto my-2 flex items-center justify-between text-slate-700 px-4">
+    <div class="flex items-center gap-2">
+      <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 animate-ping"></span>
+      <span class="text-base md:text-lg font-bold text-emerald-900">学生请直接点击大屏选项 · 答题后自动展开名师层次分析看板</span>
+    </div>
+    <button onclick="resetCurrentLevel()" class="bg-white/90 hover:bg-white text-slate-800 border-2 border-slate-400 px-5 py-1.5 rounded-xl font-bold text-lg shadow-sm active:scale-95 transition-all">
+      🔄 重做本关
+    </button>
+  </footer>
+
+  <!-- ================= 核心分析大看板浮层 (答对/答错均展示，黄廖第七版框式切分) ================= -->
+  <div id="analysis-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6 hidden">
+    <div class="bg-gradient-to-b from-amber-50 via-white to-amber-50 rounded-3xl max-w-6xl w-full border-4 border-amber-400 shadow-2xl p-6 md:p-8 max-h-[92vh] overflow-y-auto pop-animate flex flex-col justify-between">
+      
+      <!-- 结果状态横幅（答对：大笑脸+赞扬；答错：温和提示） -->
+      <div id="feedback-banner" class="flex items-center justify-between p-4 md:p-5 rounded-2xl mb-6 shadow-md border-2">
+        <div class="flex items-center gap-4">
+          <span id="banner-emoji" class="text-5xl md:text-6xl">😆</span>
+          <div>
+            <h3 id="banner-title" class="text-2xl md:text-3xl font-black font-serif-sc">
+              太棒了！火眼金睛，完全正确！👏
+            </h3>
+            <p id="banner-subtitle" class="text-lg md:text-xl font-bold mt-1">
+              准确识别句型！请仔细研读本题的直接成分层次切分：
+            </p>
+          </div>
+        </div>
+        <div id="banner-badge" class="hidden md:flex text-xl font-black px-5 py-2 rounded-xl text-white bg-emerald-600 shadow">
+          得分 +20
+        </div>
+      </div>
+
+      <!-- 核心重点一：黄廖第七版【直接成分框式层次切分图】 -->
+      <div class="bg-white rounded-2xl p-5 md:p-7 border-3 border-slate-300 shadow-sm mb-6">
+        <div class="flex items-center justify-between border-b-2 border-slate-200 pb-3 mb-5">
+          <div class="flex items-center gap-2">
+            <span class="text-3xl">📐</span>
+            <h4 class="text-2xl md:text-3xl font-black text-slate-900 font-serif-sc">
+              黄伯荣、廖序东第七版 · 框式层次分析图解
+            </h4>
+          </div>
+          <span class="text-base md:text-lg bg-teal-100 text-teal-950 font-black px-4 py-1 rounded-full border border-teal-300">
+            逐层二分 · 标明关系
+          </span>
+        </div>
+
+        <!-- 层次分析图形视窗 (大字号、横向自适应、下行多层结构) -->
+        <div id="tree-diagram-container" class="overflow-x-auto py-4 px-2 flex flex-col items-center">
+          <!-- 动态渲染切分图 -->
+        </div>
+      </div>
+
+      <!-- 核心重点二：名师解题思路 & 语法小结 (大字号 >= 22px-26px) -->
+      <div class="bg-amber-100/70 border-3 border-amber-300 rounded-2xl p-5 md:p-6 mb-6">
+        <div class="flex items-center gap-2 text-amber-950 text-2xl md:text-3xl font-black mb-3 font-serif-sc">
+          <span>💡</span> 名师点拨与解题思路：
+        </div>
+        <p id="analysis-logic-text" class="text-slate-900 text-xl md:text-2xl font-bold leading-relaxed">
+          <!-- 动态注入深入细致的语法判断思路 -->
+        </p>
+      </div>
+
+      <!-- 底部控制按键 -->
+      <div class="flex flex-wrap gap-4 pt-2">
+        <button onclick="handleModalNext()" class="btn-whiteboard flex-1 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-black text-2xl md:text-3xl py-4 rounded-2xl border-2 border-emerald-400">
+          进入下一题 ➜
+        </button>
+        <button onclick="closeAnalysisModalOnly()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-black text-xl md:text-2xl px-8 py-4 rounded-2xl">
+          返回原题
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 关卡全通关大捷弹窗 -->
+  <div id="victory-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-gradient-to-b from-amber-50 via-white to-amber-100 rounded-3xl p-8 max-w-xl w-full border-4 border-yellow-400 shadow-2xl text-center pop-animate">
+      <div class="text-8xl mb-3 animate-bounce">🏆</div>
+      <h2 class="text-4xl md:text-5xl font-black text-amber-950 font-serif-sc mb-2">
+        闯关大捷！满载而归！
+      </h2>
+      <p id="victory-level-desc" class="text-2xl font-bold text-emerald-800 mb-5">
+        同学们已经攻克了本关的所有难点！
+      </p>
+
+      <div class="bg-white/90 border-2 border-amber-300 rounded-2xl p-5 mb-6 text-xl md:text-2xl font-black text-slate-800 space-y-2">
+        <div>全班累计积分：<span id="final-score-val" class="text-4xl text-emerald-600 font-serif-sc">0</span></div>
+        <div class="text-amber-600 text-3xl">⭐⭐⭐⭐⭐</div>
+      </div>
+
+      <button onclick="advanceNextLevel()" id="victory-action-btn" class="btn-whiteboard w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-2xl md:text-3xl py-4 rounded-2xl border-2 border-emerald-300">
+        开启下一关挑战 🚀
+      </button>
+    </div>
+  </div>
+
+  <!-- 句型体系速查宝典 (与教材第7版完全一致) -->
+  <div id="knowledge-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-stone-50 rounded-3xl max-w-5xl w-full border-4 border-emerald-500 shadow-2xl p-6 md:p-8 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b-2 border-emerald-300 pb-4 mb-6">
+        <div class="flex items-center gap-3">
+          <span class="text-4xl">🌳</span>
+          <h2 class="text-2xl md:text-4xl font-black text-emerald-950 font-serif-sc">
+            现代汉语句型概况·知识图谱（第七版）
+          </h2>
+        </div>
+        <button onclick="toggleKnowledgeModal(false)" class="text-slate-500 hover:text-slate-900 text-4xl font-bold p-2">
+          ✕
+        </button>
+      </div>
+
+      <!-- 架构图谱 -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center bg-white p-6 md:p-8 rounded-2xl border-2 border-emerald-200 shadow-sm">
+        <div class="md:col-span-3 flex flex-col items-center justify-center p-6 bg-emerald-700 text-white rounded-2xl shadow-md border-2 border-emerald-500">
+          <span class="text-4xl font-black font-serif-sc">单 句</span>
+          <span class="text-sm text-emerald-100 mt-2 font-bold">按结构模式分类</span>
+        </div>
+
+        <div class="md:col-span-9 space-y-6">
+          <!-- 主谓句 -->
+          <div class="border-3 border-sky-400 bg-sky-50/80 p-5 rounded-2xl">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="bg-sky-600 text-white text-xl font-black px-4 py-1 rounded-xl">一、主谓句</span>
+              <span class="text-base text-sky-900 font-bold">由主语和谓语两个直接成分构成的单句</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+              <div class="bg-white p-3 rounded-xl border border-sky-200 shadow-sm">
+                <div class="font-black text-sky-950 text-xl">名词谓语句</div>
+                <div class="text-slate-600 text-sm font-semibold mt-1">例如：今天星期五</div>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-sky-200 shadow-sm">
+                <div class="font-black text-sky-950 text-xl">动词谓语句</div>
+                <div class="text-slate-600 text-sm font-semibold mt-1">例如：我们爱科学</div>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-sky-200 shadow-sm">
+                <div class="font-black text-sky-950 text-xl">形容词谓语句</div>
+                <div class="text-slate-600 text-sm font-semibold mt-1">例如：景色宜人</div>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-sky-200 shadow-sm">
+                <div class="font-black text-sky-950 text-xl">主谓谓语句</div>
+                <div class="text-slate-600 text-sm font-semibold mt-1">例如：他身体很好</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 非主谓句 -->
+          <div class="border-3 border-amber-400 bg-amber-50/80 p-5 rounded-2xl">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="bg-amber-600 text-white text-xl font-black px-4 py-1 rounded-xl">二、非主谓句</span>
+              <span class="text-base text-amber-900 font-bold">分不出主语和谓语，由单个词或偏正/动宾等构成的单句</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+              <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-sm">
+                <div class="font-black text-amber-950 text-xl">动词性非主谓句</div>
+                <div class="text-slate-600 text-sm font-semibold mt-1">例如：下雨了 / 出发！</div>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-sm">
+                <div class="font-black text-amber-950 text-xl">形容词性非主谓句</div>
+                <div class="text-slate-600 text-sm font-semibold mt-1">例如：好极了！/ 对！</div>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-sm">
+                <div class="font-black text-amber-950 text-xl">名词性非主谓句</div>
+                <div class="text-slate-600 text-sm font-semibold mt-1">例如：繁华的街景</div>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-sm">
+                <div class="font-black text-amber-950 text-xl">叹词句</div>
+                <div class="text-slate-600 text-sm font-semibold mt-1">例如：天哪！/ 哎呀！</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 text-center">
+        <button onclick="toggleKnowledgeModal(false)" class="btn-whiteboard bg-emerald-700 hover:bg-emerald-600 text-white font-black text-2xl px-12 py-3.5 rounded-2xl">
+          关闭宝典 · 继续挑战
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ================= 纯原声合成音效（Web Audio API 无需外部网络） ================= */
+    class WhiteboardAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.soundEnabled = true;
+      }
+      init() {
+        if (!this.ctx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (AC) this.ctx = new AC();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playCorrectDing() {
+        if (!this.soundEnabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        // 清脆悦耳双重叮咚音
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(659.25, now);
+        osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.15);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.5);
+      }
+      playWrongBuzzer() {
+        if (!this.soundEnabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(280, now);
+        osc.frequency.linearRampToValueAtTime(200, now + 0.25);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+      playFanfare() {
+        if (!this.soundEnabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.5];
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+          gain.gain.setValueAtTime(0.28, now + idx * 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.4);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + idx * 0.1);
+          osc.stop(now + idx * 0.1 + 0.4);
+        });
+      }
+    }
+    const audioEngine = new WhiteboardAudioEngine();
+
+    /* ================= 题库数据：黄廖本第七版标准框式层次切分定义 ================= */
+    const QUESTION_BANK = {
+      level1: [
+        {
+          sentence: "窗下一幅繁华的街景。",
+          answer: "非主谓句",
+          options: ["主谓句", "非主谓句"],
+          tokens: ["窗下", "一幅", "繁华的", "街景。"],
+          tiers: [
+            {
+              levelName: "第①层",
+              slices: [
+                { text: "窗下", role: "定语", relation: "偏正（定中）" },
+                { text: "一幅 繁华的 街景。", role: "中心语", relation: "偏正（定中）" }
+              ]
+            },
+            {
+              levelName: "第②层",
+              slices: [
+                { skip: true, text: "窗下" },
+                { text: "一幅", role: "定语", relation: "偏正（定中）" },
+                { text: "繁华的 街景。", role: "中心语", relation: "偏正（定中）" }
+              ]
+            },
+            {
+              levelName: "第③层",
+              slices: [
+                { skip: true, text: "窗下" },
+                { skip: true, text: "一幅" },
+                { text: "繁华的", role: "定语", relation: "偏正（定中）" },
+                { text: "街景。", role: "中心语", relation: "偏正（定中）" }
+              ]
+            }
+          ],
+          logic: "【黄廖本第7版思路】全句是由一个复杂的偏正名词短语构成，用来描写环境景象。句中找不到主语和谓语两个直接成分的对立关系，因此是典型的【名词性非主谓句】。"
+        },
+        {
+          sentence: "他给我们以武器。",
+          answer: "主谓句",
+          options: ["主谓句", "非主谓句"],
+          tokens: ["他", "给", "我们", "以武器。"],
+          tiers: [
+            {
+              levelName: "第①层",
+              slices: [
+                { text: "他", role: "主语", relation: "主 ‖ 谓" },
+                { text: "给 我们 以武器。", role: "谓语", relation: "主 ‖ 谓" }
+              ]
+            },
+            {
+              levelName: "第②层",
+              slices: [
+                { skip: true, text: "他" },
+                { text: "给", role: "述语", relation: "述宾（双宾）" },
+                { text: "我们", role: "近宾语", relation: "述宾（双宾）" },
+                { text: "以武器。", role: "远宾语", relation: "述宾（双宾）" }
+              ]
+            },
+            {
+              levelName: "第③层",
+              slices: [
+                { skip: true, text: "他" },
+                { skip: true, text: "给" },
+                { skip: true, text: "我们" },
+                { text: "以", role: "介词", relation: "介宾短语" },
+                { text: "武器。", role: "介词宾语", relation: "介宾短语" }
+              ]
+            }
+          ],
+          logic: "【黄廖本第7版思路】第一层切分出施事主语“他”和动词谓语“给我们以武器”。谓语内部由动词“给”带近宾语“我们”和介词短语充当的远宾语“以武器”，属于【主谓句·动词谓语句（双宾句）】。"
+        },
+        {
+          sentence: "这种野兔子，我一次能捕获两三只。",
+          answer: "主谓句",
+          options: ["主谓句", "非主谓句"],
+          tokens: ["这种野兔子，", "我", "一次能", "捕获", "两三只。"],
+          tiers: [
+            {
+              levelName: "第①层",
+              slices: [
+                { text: "这种野兔子，", role: "大主语（受事）", relation: "主 ‖ 谓" },
+                { text: "我 一次能 捕获 两三只。", role: "大谓语（主谓短语）", relation: "主 ‖ 谓" }
+              ]
+            },
+            {
+              levelName: "第②层",
+              slices: [
+                { skip: true, text: "这种野兔子，" },
+                { text: "我", role: "小主语", relation: "主 ‖ 谓" },
+                { text: "一次能 捕获 两三只。", role: "小谓语", relation: "主 ‖ 谓" }
+              ]
+            },
+            {
+              levelName: "第③层",
+              slices: [
+                { skip: true, text: "这种野兔子，" },
+                { skip: true, text: "我" },
+                { text: "一次能", role: "状语", relation: "偏正（状中）" },
+                { text: "捕获 两三只。", role: "中心语", relation: "偏正（状中）" }
+              ]
+            },
+            {
+              levelName: "第④层",
+              slices: [
+                { skip: true, text: "这种野兔子，" },
+                { skip: true, text: "我" },
+                { skip: true, text: "一次能" },
+                { text: "捕获", role: "述语", relation: "述宾关系" },
+                { text: "两三只。", role: "宾语", relation: "述宾关系" }
+              ]
+            }
+          ],
+          logic: "【黄廖本第7版思路】大主语为前置受事话题“这种野兔子”，大谓语为完整的主谓短语“我一次能捕获两三只”。大谓语内部可继续二分为小主语和小谓语，因此属于典型的【主谓句·主谓谓语句】。"
+        },
+        {
+          sentence: "天哪！",
+          answer: "非主谓句",
+          options: ["主谓句", "非主谓句"],
+          tokens: ["天", "哪！"],
+          tiers: [
+            {
+              levelName: "第①层",
+              slices: [
+                { text: "天", role: "独词核心语", relation: "叹词化独用" },
+                { text: "哪！", role: "感叹语气助词", relation: "语气附属" }
+              ]
+            }
+          ],
+          logic: "【黄廖本第7版思路】由名词“天”与感叹语气词结合构成的独词感叹，全句无法分出主语和谓语，属于【非主谓句·叹词句（名词叹词化）】。"
+        },
+        {
+          sentence: "你们应该把情况汇报上去。",
+          answer: "主谓句",
+          options: ["主谓句", "非主谓句"],
+          tokens: ["你们", "应该", "把情况", "汇报", "上去。"],
+          tiers: [
+            {
+              levelName: "第①层",
+              slices: [
+                { text: "你们", role: "主语", relation: "主 ‖ 谓" },
+                { text: "应该 把情况 汇报 上去。", role: "谓语", relation: "主 ‖ 谓" }
+              ]
+            },
+            {
+              levelName: "第②层",
+              slices: [
+                { skip: true, text: "你们" },
+                { text: "应该", role: "能愿状语", relation: "偏正（状中）" },
+                { text: "把情况 汇报 上去。", role: "中心语", relation: "偏正（状中）" }
+              ]
+            },
+            {
+              levelName: "第③层",
+              slices: [
+                { skip: true, text: "你们" },
+                { skip: true, text: "应该" },
+                { text: "把情况", role: "介宾状语", relation: "偏正（状中）" },
+                { text: "汇报 上去。", role: "述补中心语", relation: "偏正（状中）" }
+              ]
+            },
+            {
+              levelName: "第④层",
+              slices: [
+                { skip: true, text: "你们" },
+                { skip: true, text: "应该" },
+                { skip: true, text: "把情况" },
+                { text: "汇报", role: "述语", relation: "述补（趋向）" },
+                { text: "上去。", role: "趋向补语", relation: "述补（趋向）" }
+              ]
+            }
+          ],
+          logic: "【黄廖本第7版思路】主语为“你们”，谓语中带有能愿动词作状语，并包含“把”字介宾短语作状语修饰动补短语“汇报上去”，属于典型的【主谓句·动词谓语句（“把”字句）】。"
+        }
+      ],
+
+      level2: [
+        {
+          sentence: "今天星期五。",
+          answer: "名词谓语句",
+          options: ["名词谓语句", "动词谓语句", "形容词谓语句", "主谓谓语句"],
+          tokens: ["今天", "星期五。"],
+          tiers: [
+            {
+              levelName: "第①层",
+              slices: [
+                { text: "今天", role: "主语（时间名词）", relation: "主 ‖ 谓" },
+                { text: "星期五。", role: "谓语（名词短语）", relation: "主 ‖ 谓" }
+              ]
+            }
+          ],
+          logic: "【黄廖本第7版思路】主语“今天”与谓语“星期五”皆为名词，无需动词“是”连接直接构成判断陈述，多用于表示日期、天气、节气或籍贯，属于【主谓句·名词谓语句】。"
+        },
+        {
+          sentence: "景色宜人。",
+          answer: "形容词谓语句",
+          options: ["名词谓语句", "动词谓语句", "形容词谓语句", "主谓谓语句"],
+          tokens: ["景色", "宜人。"],
+          tiers: [
+            {
+              levelName: "第①层",
+              slices: [
+                { text: "景色", role: "主语", relation: "主 ‖ 谓" },
+                { text: "宜人。", role: "谓语（形容词）", relation: "主 ‖ 谓" }
+              ]
+            }
+          ],
+          logic: "【黄廖本第7版思路】主语为“景色”，谓语由形容词“宜人”充当，用以描写事物的性状特征，属于【主谓句·形容词谓语句】。"
+        },
+        {
+          sentence: "大家故意不给他水喝。",
+          answer: "动词谓语句",
+          options: ["名词谓语句", "动词谓语句", "形容词谓语句", "主谓谓语句"],
+          tokens: ["大家", "故意不", "给", "他", "水喝。"],
+          tiers: [
+            {
+              levelName: "第①层",
+              slices: [
+                { text: "大家", role: "主语", relation: "主 ‖ 谓" },
+                { text: "故意不 给 他 水喝。", role: "谓语（兼语短语）", relation: "主 ‖ 谓" }
+              ]
+            },
+            {
+              levelName: "第②层",
+              slices: [
+                { skip: true, text: "大家" },
+                { text: "故意不", role: "状语", relation: "偏正（状中）" },
+                { text: "给 他 水喝。", role: "中心语（兼语）", relation: "偏正（状中）" }
+              ]
+            },
+            {
+              levelName: "第③层",
+              slices: [
+                { skip: true, text: "大家" },
+                { skip: true, text: "故意不" },
+                { text: "给", role: "述语", relation: "兼语框架" },
+                { text: "他", role: "兼语（宾兼主）", relation: "兼语框架" },
+                { text: "水喝。", role: "动宾连带", relation: "兼语框架" }
+              ]
+            }
+          ],
+          logic: "【黄廖本第7版思路】谓语由兼语短语充当：“他”既作动词“给”的宾语，又作动词“喝”的发出者（兼语），整句属于【主谓句·动词谓语句（兼语句）】。"
+        },
+        {
+          sentence: "伍子胥过昭关一夜白了头。",
+          answer: "动词谓语句",
+          options: ["名词谓语句", "动词谓语句", "形容词谓语句", "主谓谓语句"],
+          tokens: ["伍子胥", "过昭关", "一夜", "白了头。"],
+          tiers: [
+            {
+              levelName: "第①层",
+              slices: [
+                { text: "伍子胥", role: "主语", relation: "主 ‖ 谓" },
+                { text: "过昭关 一夜 白了头。", role: "谓语（连谓短语）", relation: "主 ‖ 谓" }
+              ]
+            },
+            {
+              levelName: "第②层",
+              slices: [
+                { skip: true, text: "伍子胥" },
+                { text: "过昭关", role: "动词短语1", relation: "连谓关系" },
+                { text: "一夜 白了头。", role: "动词短语2", relation: "连谓关系" }
+              ]
+            },
+            {
+              levelName: "第③层",
+              slices: [
+                { skip: true, text: "伍子胥" },
+                { text: "过 昭关", role: "述宾短语", relation: "动宾" },
+                { text: "一夜", role: "状语", relation: "偏正" },
+                { text: "白了头。", role: "述宾中心语", relation: "使动宾语" }
+              ]
+            }
+          ],
+          logic: "【黄廖本第7版思路】谓语由“过昭关”和“一夜白了头”两个动词性短语前后连续发生构成，共用一个主语“伍子胥”，属于【主谓句·动词谓语句（连谓句）】。"
+        },
+        {
+          sentence: "大厅里弥漫着一种森严气氛。",
+          answer: "动词谓语句",
+          options: ["名词谓语句", "动词谓语句", "形容词谓语句", "主谓谓语句"],
+          tokens: ["大厅里", "弥漫着", "一种", "森严", "气氛。"],
+          tiers: [
+            {
+              levelName: "第①层",
+              slices: [
+                { text: "大厅里", role: "主语（处所词）", relation: "主 ‖ 谓" },
+                { text: "弥漫着 一种 森严 气氛。", role: "谓语（存现短语）", relation: "主 ‖ 谓" }
+              ]
+            },
+            {
+              levelName: "第②层",
+              slices: [
+                { skip: true, text: "大厅里" },
+                { text: "弥漫着", role: "述语+动态助词", relation: "述宾关系" },
+                { text: "一种 森严 气氛。", role: "存现宾语", relation: "述宾关系" }
+              ]
+            },
+            {
+              levelName: "第③层",
+              slices: [
+                { skip: true, text: "大厅里" },
+                { skip: true, text: "弥漫着" },
+                { text: "一种", role: "数量定语", relation: "偏正（定中）" },
+                { text: "森严", role: "定语", relation: "偏正（定中）" },
+                { text: "气氛。", role: "中心语", relation: "偏正（定中）" }
+              ]
+            }
+          ],
+          logic: "【黄廖本第7版思路】句首处所词“大厅里”充当主语，谓语动词带动态助词“着”，后跟存现主体宾语，表示某种状态在处所中存在或显现，属于【主谓句·动词谓语句（存现句）】。"
+        }
+      ],
+
+      level3: [
+        {
+          sentence: "出发！",
+          answer: "动词性非主谓句",
+          options: ["动词性非主谓句", "形容词性非主谓句", "名词性非主谓句", "叹词句"],
+          tokens: ["出发！"],
+          tiers: [
+            {
+              levelName: "第①层",
+              slices: [
+                { text: "出发！", role: "动词独用句", relation: "动词性非主谓" }
+              ]
+            }
+          ],
+          logic: "【黄廖本第7版思路】全句由单个动词“出发”充当，发出指令口号，在结构上并不包含主谓配对关系，因此判定为【动词性非主谓句】。"
+        },
+        {
+          sentence: "好极了！",
+          answer: "形容词性非主谓句",
+          options: ["动词性非主谓句", "形容词性非主谓句", "名词性非主谓句", "叹词句"],
+          tokens: ["好", "极了！"],
+          tiers: [
+            {
+              levelName: "第①层",
+              slices: [
+                { text: "好", role: "述语（形容词）", relation: "述补短语" },
+                { text: "极了！", role: "程度补语", relation: "述补短语" }
+              ]
+            }
+          ],
+          logic: "【黄廖本第7版思路】由形容词“好”带程度补语“极了”构成的赞叹短语独立成句，不具备主语部分，属于【形容词性非主谓句】。"
+        },
+        {
+          sentence: "当心油漆！",
+          answer: "动词性非主谓句",
+          options: ["动词性非主谓句", "形容词性非主谓句", "名词性非主谓句", "叹词句"],
+          tokens: ["当心", "油漆！"],
+          tiers: [
+            {
+              levelName: "第①层",
+              slices: [
+                { text: "当心", role: "动词述语", relation: "述宾（动宾短语）" },
+                { text: "油漆！", role: "受事宾语", relation: "述宾（动宾短语）" }
+              ]
+            }
+          ],
+          logic: "【黄廖本第7版思路】标语告示类警示语句，由动宾短语（动词“当心”+宾语“油漆”）直接成句，属于典型的【动词性非主谓句】。"
+        },
+        {
+          sentence: "一九四九年十月一日。",
+          answer: "名词性非主谓句",
+          options: ["动词性非主谓句", "形容词性非主谓句", "名词性非主谓句", "叹词句"],
+          tokens: ["一九四九年", "十月一日。"],
+          tiers: [
+            {
+              levelName: "第①层",
+              slices: [
+                { text: "一九四九年", role: "定语（年份）", relation: "偏正（时间名词短语）" },
+                { text: "十月一日。", role: "中心语（日期）", relation: "偏正（时间名词短语）" }
+              ]
+            }
+          ],
+          logic: "【黄廖本第7版思路】由时间名词构成的偏正短语，常用于历史事件交代、舞台剧报幕或日记开头，属于【名词性非主谓句】。"
+        },
+        {
+          sentence: "哎呀！",
+          answer: "叹词句",
+          options: ["动词性非主谓句", "形容词性非主谓句", "名词性非主谓句", "叹词句"],
+          tokens: ["哎呀！"],
+          tiers: [
+            {
+              levelName: "第①层",
+              slices: [
+                { text: "哎呀！", role: "感叹词独用", relation: "叹词非主谓句" }
+              ]
+            }
+          ],
+          logic: "【黄廖本第7版思路】“哎呀”是纯粹表达惊讶或惊叹的叹词独用，不能细分主语和谓语，属于非主谓句中的【叹词句】。"
+        }
+      ]
+    };
+
+    /* ================= 全局运行状态 ================= */
+    let currentLvl = 1;
+    let currentIdx = 0;
+    let totalScore = 0;
+    let comboStreak = 0;
+
+    const PRAISE_QUOTES = [
+      "太棒了！火眼金睛，完全正确！👏",
+      "精彩绝伦！概念理解得非常透彻！🌟",
+      "登峰造极！精准无误，智慧星+1！🏆",
+      "分析到位！为主谓结构点赞！✨"
+    ];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderQuestion();
+    });
+
+    // 切换关卡
+    function changeLevel(lvl) {
+      currentLvl = lvl;
+      currentIdx = 0;
+      updateLevelTabs();
+      renderQuestion();
+    }
+
+    function updateLevelTabs() {
+      for (let i = 1; i <= 3; i++) {
+        const tab = document.getElementById(`tab-lvl-${i}`);
+        if (i === currentLvl) {
+          tab.className = "px-5 py-2.5 rounded-xl text-lg md:text-2xl font-black transition-all bg-emerald-700 text-white shadow-md scale-105";
+        } else {
+          tab.className = "px-5 py-2.5 rounded-xl text-lg md:text-2xl font-black transition-all text-emerald-950 hover:bg-emerald-100";
+        }
+      }
+      const lvlBadges = {
+        1: "关卡一 · 主谓 VS 非主谓",
+        2: "关卡二 · 主谓句精深细分",
+        3: "关卡三 · 非主谓句大挑战"
+      };
+      document.getElementById('level-badge').innerText = lvlBadges[currentLvl];
+    }
+
+    // 渲染题目
+    function renderQuestion() {
+      const qList = QUESTION_BANK[`level${currentLvl}`];
+      const q = qList[currentIdx];
+
+      document.getElementById('question-index-tag').innerText = `第 ${currentIdx + 1} / ${qList.length} 题`;
+      document.getElementById('sentence-main-box').innerText = q.sentence;
+
+      // 渲染选项 (超大按钮，24px-28px字号)
+      const grid = document.getElementById('options-btn-grid');
+      grid.innerHTML = '';
+
+      const btnStyles = [
+        "from-blue-600 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 border-blue-400",
+        "from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 border-emerald-400",
+        "from-amber-600 to-orange-700 hover:from-amber-500 hover:to-orange-600 border-amber-400",
+        "from-purple-600 to-pink-700 hover:from-purple-500 hover:to-pink-600 border-purple-400"
+      ];
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        const color = btnStyles[idx % btnStyles.length];
+        btn.className = `btn-whiteboard w-full bg-gradient-to-r ${color} text-white font-black text-2xl sm:text-3xl md:text-3xl py-6 px-6 rounded-2xl border-2 flex items-center justify-between shadow-lg`;
+        btn.innerHTML = `
+          <span class="flex items-center gap-4">
+            <span class="w-11 h-11 rounded-full bg-white/20 flex items-center justify-center text-2xl font-mono">${String.fromCharCode(65 + idx)}</span>
+            <span>${opt}</span>
+          </span>
+          <span class="text-3xl">👉</span>
+        `;
+        btn.onclick = () => onSelectOption(opt);
+        grid.appendChild(btn);
+      });
+    }
+
+    // 选项选择与判定
+    function onSelectOption(chosen) {
+      const q = QUESTION_BANK[`level${currentLvl}`][currentIdx];
+      const isCorrect = (chosen === q.answer);
+
+      // 横幅与状态元素
+      const banner = document.getElementById('feedback-banner');
+      const emoji = document.getElementById('banner-emoji');
+      const title = document.getElementById('banner-title');
+      const sub = document.getElementById('banner-subtitle');
+      const badge = document.getElementById('banner-badge');
+
+      if (isCorrect) {
+        audioEngine.playCorrectDing();
+        triggerConfettiRain();
+        totalScore += 20;
+        comboStreak += 1;
+        updateScoreStats();
+
+        banner.className = "flex items-center justify-between p-4 md:p-5 rounded-2xl mb-6 shadow-md border-3 border-emerald-400 bg-emerald-100 text-emerald-950";
+        emoji.innerText = "😆";
+        title.innerText = PRAISE_QUOTES[Math.floor(Math.random() * PRAISE_QUOTES.length)];
+        sub.innerText = `恭喜你！该句正是【${q.answer}】！连胜记录已达 ${comboStreak} 连击！`;
+        badge.classList.remove('hidden');
+      } else {
+        audioEngine.playWrongBuzzer();
+        comboStreak = 0;
+        updateScoreStats();
+
+        banner.className = "flex items-center justify-between p-4 md:p-5 rounded-2xl mb-6 shadow-md border-3 border-rose-300 bg-rose-100 text-rose-950";
+        emoji.innerText = "🧐";
+        title.innerText = "差一点点，咱们一起来看层次切分！";
+        sub.innerText = `该句正确归类为【${q.answer}】（你的选择：${chosen}）。仔细研读框式图解：`;
+        badge.classList.add('hidden');
+      }
+
+      // 无论对错，渲染黄廖本第七版标准框式层次图
+      renderHuangLiaoHierarchyTree(q);
+
+      // 注入名师思路
+      document.getElementById('analysis-logic-text').innerText = q.logic;
+
+      // 展开大看板
+      document.getElementById('analysis-modal').classList.remove('hidden');
+    }
+
+    // 渲染黄伯荣廖序东第七版框式层次切分图
+    function renderHuangLiaoHierarchyTree(q) {
+      const container = document.getElementById('tree-diagram-container');
+      container.innerHTML = '';
+
+      // 外层包裹纸板卡
+      const treeCard = document.createElement('div');
+      treeCard.className = "w-full max-w-5xl bg-amber-50/50 p-6 rounded-2xl border-2 border-slate-300 shadow-inner flex flex-col gap-4";
+
+      // 顶行：语句单位词语横向排列（字号 28px - 34px）
+      const tokenRow = document.createElement('div');
+      tokenRow.className = "grid grid-flow-col auto-cols-fr gap-3 text-center pb-2 border-b-2 border-slate-400";
+      q.tokens.forEach(tk => {
+        const el = document.createElement('div');
+        el.className = "text-2xl sm:text-3xl md:text-4xl font-black text-slate-950 font-serif-sc py-2 px-1 bg-white rounded-xl border-2 border-slate-400 shadow-sm";
+        el.innerText = tk;
+        tokenRow.appendChild(el);
+      });
+      treeCard.appendChild(tokenRow);
+
+      // 下行层级切分（第①层、第②层...），大字号 22px-26px 标注关系与成分
+      const tiersContainer = document.createElement('div');
+      tiersContainer.className = "flex flex-col gap-3.5 mt-2";
+
+      q.tiers.forEach(tier => {
+        const tierRow = document.createElement('div');
+        tierRow.className = "flex items-center gap-3";
+
+        // 层级标签（如：第①层）
+        const tierTag = document.createElement('div');
+        tierTag.className = "w-20 md:w-24 text-center py-2 bg-slate-800 text-white font-black text-lg md:text-xl rounded-xl shadow-sm flex-shrink-0";
+        tierTag.innerText = tier.levelName;
+        tierRow.appendChild(tierTag);
+
+        // 框式切分条
+        const sliceBoxGrid = document.createElement('div');
+        sliceBoxGrid.className = "flex-1 grid grid-flow-col auto-cols-fr gap-2 md:gap-3";
+
+        tier.slices.forEach(slice => {
+          const sliceBox = document.createElement('div');
+          if (slice.skip) {
+            // 已切分或本层不参与切分的部分，保持对齐占位
+            sliceBox.className = "opacity-20 border-2 border-dashed border-slate-300 rounded-xl p-2 text-center";
+            sliceBox.innerHTML = `<span class="text-xs text-slate-400">已切分</span>`;
+          } else {
+            // 切分框：标明语法成分与结构关系 (大字号 22px-26px)
+            sliceBox.className = "bg-white border-3 border-slate-800 rounded-xl p-2.5 md:p-3 text-center shadow-md relative group hover:border-emerald-600 transition-colors";
+            sliceBox.innerHTML = `
+              <div class="text-xl md:text-2xl font-black text-emerald-950 mb-0.5">${slice.role}</div>
+              <div class="inline-block text-sm md:text-base font-bold bg-amber-200 text-amber-950 px-2.5 py-0.5 rounded-lg border border-amber-400">
+                ${slice.relation}
+              </div>
+            `;
+          }
+          sliceBoxGrid.appendChild(sliceBox);
+        });
+
+        tierRow.appendChild(sliceBoxGrid);
+        tiersContainer.appendChild(tierRow);
+      });
+
+      treeCard.appendChild(tiersContainer);
+      container.appendChild(treeCard);
+    }
+
+    // 模态框点击“进入下一题”
+    function handleModalNext() {
+      document.getElementById('analysis-modal').classList.add('hidden');
+      const qList = QUESTION_BANK[`level${currentLvl}`];
+      if (currentIdx + 1 < qList.length) {
+        currentIdx++;
+        renderQuestion();
+      } else {
+        // 当前关卡顺利通关
+        showLevelVictory();
+      }
+    }
+
+    function closeAnalysisModalOnly() {
+      document.getElementById('analysis-modal').classList.add('hidden');
+    }
+
+    // 关卡通关结算
+    function showLevelVictory() {
+      audioEngine.playFanfare();
+      triggerConfettiRain();
+      setTimeout(triggerConfettiRain, 500);
+
+      document.getElementById('final-score-val').innerText = totalScore;
+      const vDesc = document.getElementById('victory-level-desc');
+      const vBtn = document.getElementById('victory-action-btn');
+
+      if (currentLvl < 3) {
+        vDesc.innerText = `同学们已全胜通关第 ${currentLvl} 关！准备迎接更高难度挑战！`;
+        vBtn.innerText = `开启第 ${currentLvl + 1} 关挑战 🚀`;
+        vBtn.onclick = () => {
+          document.getElementById('victory-modal').classList.add('hidden');
+          changeLevel(currentLvl + 1);
+        };
+      } else {
+        vDesc.innerText = "太了不起了！全班已攻克《现代汉语》句型与层次分析全部关卡！";
+        vBtn.innerText = "重新玩转全套题目 🌟";
+        vBtn.onclick = () => {
+          document.getElementById('victory-modal').classList.add('hidden');
+          changeLevel(1);
+        };
+      }
+
+      document.getElementById('victory-modal').classList.remove('hidden');
+    }
+
+    function advanceNextLevel() {
+      document.getElementById('victory-modal').classList.add('hidden');
+      if (currentLvl < 3) {
+        changeLevel(currentLvl + 1);
+      } else {
+        changeLevel(1);
+      }
+    }
+
+    function resetCurrentLevel() {
+      currentIdx = 0;
+      comboStreak = 0;
+      updateScoreStats();
+      renderQuestion();
+    }
+
+    function updateScoreStats() {
+      document.getElementById('score-display').innerText = totalScore;
+      document.getElementById('combo-display').innerText = comboStreak;
+    }
+
+    // Canvas 彩色撒花动画
+    function triggerConfettiRain() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 150,
+          spread: 90,
+          origin: { y: 0.6 },
+          colors: ['#059669', '#d97706', '#2563eb', '#db2777', '#7c3aed']
+        });
+      }
+    }
+
+    // 句型宝典模态框
+    function toggleKnowledgeModal(show) {
+      const modal = document.getElementById('knowledge-modal');
+      if (show) {
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    // 音效开关
+    function toggleAudio() {
+      audioEngine.soundEnabled = !audioEngine.soundEnabled;
+      const btn = document.getElementById('audio-toggle-btn');
+      btn.innerText = audioEngine.soundEnabled ? "🔊" : "🔇";
+    }
+
+    // 全屏白板模式
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.warn("全屏受限:", err);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+  </script>
+</body>
+</html>
