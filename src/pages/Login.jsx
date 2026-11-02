@@ -4,7 +4,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import InkSeal from '../components/student/InkSeal.jsx'
 import { toVirtualEmail } from '../lib/constants.js'
 import { useAuth } from '../lib/auth-context.js'
-import { zhError } from '../lib/errors.js'
 import { supabase } from '../lib/supabase.js'
 
 const ROLES = [
@@ -60,11 +59,23 @@ export default function Login() {
 
     const email = student || !acc.includes('@') ? toVirtualEmail(acc) : acc
 
+    console.log('VITE_SUPABASE_URL', import.meta.env.VITE_SUPABASE_URL)
+    console.log('VITE_SUPABASE_ANON_KEY', import.meta.env.VITE_SUPABASE_ANON_KEY)
+
     setLoading(true)
-    const { data, error: err } = await supabase.auth.signInWithPassword({ email, password })
+    let data
+    let err
+    try {
+      const result = await supabase.auth.signInWithPassword({ email, password })
+      data = result.data
+      err = result.error
+    } catch (error) {
+      setLoading(false)
+      return setError('登录失败：' + error.message)
+    }
     if (err) {
       setLoading(false)
-      return setError(zhError(err, '登录失败，请稍后再试'))
+      return setError('登录失败：' + err.message)
     }
 
     const { data: nextProfile, error: profileError } = await supabase
