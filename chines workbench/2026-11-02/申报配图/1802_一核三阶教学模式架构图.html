@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>「一核三阶」点位闭环教学模式</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper: "#FBF9F6",
+            ink: "#333333",
+            mute: "#666666",
+            line: "#E5E0D8",
+            peach: "#E8B4B8",
+            peachSoft: "#F8E8EA",
+            teal: "#B2C8C7",
+            tealDeep: "#8EAEAC",
+            tealSoft: "#E6F0EF",
+            bamboo: "#D7E4D4",
+            bambooSoft: "#EEF4EC",
+            dai: "#3E5566"
+          },
+          fontFamily: {
+            sans: ['"PingFang SC"', '"Hiragino Sans GB"', '"Microsoft YaHei"', '"Noto Sans SC"', "sans-serif"]
+          },
+          boxShadow: {
+            card: "0 8px 24px rgba(44, 44, 44, 0.04)"
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    html, body { background: #FBF9F6; }
+    body { -webkit-font-smoothing: antialiased; }
+  </style>
+</head>
+<body class="min-h-screen bg-paper p-10 font-sans text-ink">
+  <main class="mx-auto flex w-[1080px] max-w-full flex-col">
+    <header class="mb-10 text-center">
+      <h1 class="text-[26px] font-bold tracking-[0.08em] text-ink">「一核三阶」点位闭环教学模式</h1>
+      <div class="mt-4 flex items-center justify-center gap-4">
+        <span class="h-px w-12 bg-peach" aria-hidden="true"></span>
+        <p class="text-[15px] tracking-[0.18em] text-mute">一个卡点 · 一个题号 · 一个分值</p>
+        <span class="h-px w-12 bg-peach" aria-hidden="true"></span>
+      </div>
+    </header>
+
+    <section class="mb-12 flex justify-center" aria-label="一核">
+      <div class="flex w-[760px] items-center gap-8 rounded-full bg-tealDeep px-8 py-6 shadow-sm shadow-card">
+        <div class="flex h-[88px] w-[88px] shrink-0 items-center justify-center rounded-full bg-[#6E8F8D] text-[40px] font-semibold leading-none text-white">核</div>
+        <p class="text-left text-[18px] leading-8 text-[#1F2C2B]">微观认知卡点：一次只核对一个易混判断，精准对应题号与分值</p>
+      </div>
+    </section>
+
+    <section aria-label="三阶">
+      <div class="flex items-stretch">
+        <article class="flex min-h-[248px] flex-1 flex-col rounded-xl border border-line bg-tealSoft px-7 py-7 shadow-sm shadow-card">
+          <p class="text-[13px] tracking-[0.2em] text-[#5E7A78]">课前</p>
+          <h2 class="mt-2 text-[20px] font-semibold text-[#2F4C4A]">靶向精诊</h2>
+          <ol class="mt-6 space-y-3 text-[15px] leading-7 text-ink">
+            <li>利用学习通导出分题数据</li>
+            <li class="text-[#5E7A78]">↓</li>
+            <li>锁定异常题号</li>
+            <li class="text-[#5E7A78]">↓</li>
+            <li>核对原题</li>
+          </ol>
+        </article>
+
+        <div class="flex w-14 shrink-0 items-center justify-center" aria-hidden="true">
+          <svg width="36" height="16" viewBox="0 0 36 16" fill="none">
+            <path d="M1 8H27" stroke="#3E5566" stroke-width="1.25" />
+            <path d="M26 3.5L33 8L26 12.5" stroke="#3E5566" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" />
+          </svg>
+        </div>
+
+        <article class="flex min-h-[248px] flex-1 flex-col rounded-xl border border-line bg-peachSoft px-7 py-7 shadow-sm shadow-card">
+          <p class="text-[13px] tracking-[0.2em] text-[#A56B72]">课中</p>
+          <h2 class="mt-2 text-[20px] font-semibold text-[#6E454A]">成对研判</h2>
+          <ol class="mt-6 space-y-3 text-[15px] leading-7 text-ink">
+            <li>打开对应微课件</li>
+            <li class="text-[#C4A0A4]">↓</li>
+            <li>学生先行预判</li>
+            <li class="text-[#C4A0A4]">↓</li>
+            <li>教师剖析层次第一刀</li>
+          </ol>
+        </article>
+
+        <div class="flex w-14 shrink-0 items-center justify-center" aria-hidden="true">
+          <svg width="36" height="16" viewBox="0 0 36 16" fill="none">
+            <path d="M1 8H27" stroke="#3E5566" stroke-width="1.25" />
+            <path d="M26 3.5L33 8L26 12.5" stroke="#3E5566" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" />
+          </svg>
+        </div>
+
+        <article class="flex min-h-[248px] flex-1 flex-col rounded-xl border border-line bg-bambooSoft px-7 py-7 shadow-sm shadow-card">
+          <p class="text-[13px] tracking-[0.2em] text-[#6E8A72]">课后</p>
+          <h2 class="mt-2 text-[20px] font-semibold text-[#3E5644]">自适应重组</h2>
+          <ol class="mt-6 space-y-3 text-[15px] leading-7 text-ink">
+            <li>错题按知识点回流</li>
+            <li class="text-[#8AAA90]">↓</li>
+            <li>提高错误率高节点抽题率</li>
+            <li class="text-[#8AAA90]">↓</li>
+            <li>原次数据独立保存</li>
+          </ol>
+        </article>
+      </div>
+
+      <div class="relative mt-1 flex h-24">
+        <div class="relative h-full flex-1">
+          <span class="absolute bottom-7 left-1/2 right-0 h-px bg-dai/80"></span>
+          <span class="absolute bottom-7 left-1/2 top-1 w-px -translate-x-1/2 bg-dai/80"></span>
+          <svg class="absolute left-1/2 top-0 -translate-x-1/2" width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true">
+            <path d="M1.5 8L7 2L12.5 8" stroke="#3E5566" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="relative h-full w-14">
+          <span class="absolute bottom-7 left-0 right-0 h-px bg-dai/80"></span>
+        </div>
+        <div class="relative h-full flex-1">
+          <span class="absolute bottom-7 left-0 right-0 h-px bg-dai/80"></span>
+        </div>
+        <div class="relative h-full w-14">
+          <span class="absolute bottom-7 left-0 right-0 h-px bg-dai/80"></span>
+        </div>
+        <div class="relative h-full flex-1">
+          <span class="absolute bottom-7 left-0 right-1/2 h-px bg-dai/80"></span>
+          <span class="absolute bottom-7 left-1/2 top-1 w-px -translate-x-1/2 bg-dai/80"></span>
+        </div>
+        <p class="pointer-events-none absolute bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap text-[14px] tracking-[0.08em] text-mute">名称不变，数据存档，循环校验</p>
+      </div>
+    </section>
+
+    <footer class="mt-8 text-center">
+      <p class="text-[16px] font-semibold tracking-[0.04em] text-ink">闭环运转的核心：三阶段始终指向同一个分值。</p>
+    </footer>
+  </main>
+</body>
+</html>
