@@ -211,3 +211,12 @@ h1,
   box-shadow: none !important;
   border-radius: 0.5rem;
 }
+
+/* 隐藏 Netlify 默认悬浮徽标 */
+#netlify-badge {
+  display: none !important;
+}
+/* 如果上面的 ID 不行，也加上这个类名 */
+.netlify-badge {
+  display: none !important;
+}
