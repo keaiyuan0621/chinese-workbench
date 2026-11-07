@@ -84,6 +84,8 @@ export default function PracticeSession() {
   const [submitError, setSubmitError] = useState('')
   const [finished, setFinished] = useState(false)
   const [retrying, setRetrying] = useState(false)
+  const [retaking, setRetaking] = useState(false)
+  const [retakeError, setRetakeError] = useState('')
   const [leaveOpen, setLeaveOpen] = useState(false)
   const [leaving, setLeaving] = useState(false)
   const [leaveError, setLeaveError] = useState('')
@@ -95,6 +97,7 @@ export default function PracticeSession() {
   const toastTimer = useRef(null)
   const petalTimer = useRef(null)
   const busyRef = useRef(false)
+  const retakeRef = useRef(false)
   const submitTask = useRef(null)
   const answersRef = useRef({})
   const valueRef = useRef(null)
@@ -332,6 +335,44 @@ export default function PracticeSession() {
     }
   }
 
+  async function handleRetake() {
+    if (!user || !session || retakeRef.current) return
+    retakeRef.current = true
+    const ids = Array.isArray(session.question_ids) ? session.question_ids.filter(Boolean) : []
+    if (!ids.length) {
+      retakeRef.current = false
+      setRetakeError('这套卷子没有题目，无法重做')
+      return
+    }
+    setRetaking(true)
+    setRetakeError('')
+    try {
+      const byId = new Map((questions ?? []).map((question) => [question.id, question]))
+      const ordered = ids.map((qid) => byId.get(qid)).filter((question) => question?.id && question.stem)
+      const config = { ...(session.config ?? {}), retake_of: session.id }
+      delete config.draft
+      delete config.paused_at
+      const created = await createPracticeSession(user.id, config, ids)
+      setSession(null)
+      setQuestions(null)
+      setAnswers({})
+      setValue(null)
+      setResult(null)
+      setFinished(false)
+      setCombo(0)
+      setIndex(0)
+      setSubmitError('')
+      navigate(`/student/practice/session/${created.id}`, {
+        state: { questions: ordered.length === ids.length ? ordered : undefined },
+      })
+    } catch (err) {
+      setRetakeError(zhError(err, '没能开始重做，请稍后再试'))
+    } finally {
+      retakeRef.current = false
+      setRetaking(false)
+    }
+  }
+
   function openReview() {
     setSearchParams({ review: '1' })
   }
@@ -389,7 +430,16 @@ export default function PracticeSession() {
   }
 
   if (reviewing && questions.length) {
-    return <SessionReview questions={questions} answers={answers} onBack={closeReview} />
+    return (
+      <SessionReview
+        questions={questions}
+        answers={answers}
+        onBack={closeReview}
+        onRetake={handleRetake}
+        retaking={retaking}
+        retakeError={retakeError}
+      />
+    )
   }
 
   if (questions.length === 0 || !current) {

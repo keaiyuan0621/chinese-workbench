@@ -7,7 +7,7 @@ function statusOf(row) {
   return { label: '待批改', className: 'bg-sky-100 text-sky-700' }
 }
 
-export default function SessionReview({ questions, answers, onBack }) {
+export default function SessionReview({ questions, answers, onBack, onRetake, retaking = false, retakeError = '' }) {
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -15,14 +15,29 @@ export default function SessionReview({ questions, answers, onBack }) {
           <h1 className="text-2xl text-ink">试卷回顾</h1>
           <p className="mt-1 text-sm text-gray-500">按出题顺序查看全部题目，包括答对、答错和未作答的题</p>
         </div>
-        <button
-          type="button"
-          onClick={onBack}
-          className="inline-flex h-12 items-center justify-center rounded-full bg-white px-5 text-base font-medium text-ink ring-1 ring-gold"
-        >
-          返回
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={onBack}
+            className="inline-flex h-12 items-center justify-center rounded-full bg-white px-5 text-base font-medium text-ink ring-1 ring-gold"
+          >
+            返回
+          </button>
+          <button
+            type="button"
+            onClick={onRetake}
+            disabled={retaking}
+            className="inline-flex h-12 items-center justify-center rounded-full bg-coral-500 px-6 text-base font-semibold text-white shadow-md shadow-coral-100 hover:bg-coral-600 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {retaking ? '正在准备…' : '再做一遍'}
+          </button>
+        </div>
       </div>
+      {retakeError && (
+        <p role="alert" className="rounded-student-sm bg-coral-50 px-4 py-2.5 text-sm text-coral-600 ring-1 ring-coral-100">
+          {retakeError}
+        </p>
+      )}
 
       <ol className="space-y-4">
         {questions.map((question, index) => {
