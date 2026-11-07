@@ -4,7 +4,50 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import InkSeal from '../components/student/InkSeal.jsx'
 import { toVirtualEmail } from '../lib/constants.js'
 import { useAuth } from '../lib/auth-context.js'
+import { zhError } from '../lib/errors.js'
 import { supabase } from '../lib/supabase.js'
+
+const LOGIN_TIMEOUT_MS = 10_000
+const NETWORK_TIMEOUT_MESSAGE = '网络连接超时，请切换 WiFi/流量后重试'
+
+function withTimeout(promise, ms) {
+  let timer
+  let settled = false
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      settled = true
+      const error = new Error('timeout')
+      error.name = 'TimeoutError'
+      reject(error)
+    }, ms)
+  })
+  const guarded = Promise.resolve(promise).then(
+    (value) => (settled ? undefined : value),
+    (error) => {
+      if (settled) return undefined
+      throw error
+    },
+  )
+  return Promise.race([guarded, timeout]).finally(() => clearTimeout(timer))
+}
+
+function isNetworkFailure(err) {
+  const name = String(err?.name ?? '')
+  const msg = String(err?.message ?? err ?? '')
+  return (
+    name === 'TimeoutError' ||
+    name === 'AbortError' ||
+    name === 'AuthRetryableFetchError' ||
+    /load failed|failed to fetch|networkerror|network request failed|fetch failed|timeout|timed out|\bnetwork\b/i.test(
+      msg,
+    )
+  )
+}
+
+function loginErrorText(err) {
+  if (isNetworkFailure(err)) return NETWORK_TIMEOUT_MESSAGE
+  return zhError(err, '登录失败，请稍后再试')
+}
 
 const ROLES = [
   { id: 'student', label: '学生' },
@@ -63,48 +106,43 @@ export default function Login() {
     console.log('VITE_SUPABASE_ANON_KEY', import.meta.env.VITE_SUPABASE_ANON_KEY)
 
     setLoading(true)
-    let data
-    let err
     try {
-      const result = await supabase.auth.signInWithPassword({ email, password })
-      data = result.data
-      err = result.error
-    } catch (error) {
-      setLoading(false)
-      return setError('登录失败：' + error.message)
-    }
-    if (err) {
-      setLoading(false)
-      return setError('登录失败：' + err.message)
-    }
-
-    const { data: nextProfile, error: profileError } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', data.user.id)
-      .maybeSingle()
-
-    if (profileError || (nextProfile?.role !== 'student' && nextProfile?.role !== 'teacher')) {
-      await supabase.auth.signOut()
-      setLoading(false)
-      return setError('登录没有完成，请稍后再试')
-    }
-
-    if (nextProfile.role !== role) {
-      setRole(nextProfile.role)
-      setPassword('')
-      setLoading(false)
-      return setError(
-        nextProfile.role === 'teacher'
-          ? '这个账号是教师账号，可以直接进入教师工作台'
-          : '这个账号是学生账号，可以直接进入学生练习',
+      const { data, error: err } = await withTimeout(
+        supabase.auth.signInWithPassword({ email, password }),
+        LOGIN_TIMEOUT_MS,
       )
-    }
+      if (err) return setError(loginErrorText(err))
 
-    setLoading(false)
-    const from = location.state?.from
-    const home = nextProfile.role === 'teacher' ? '/teacher' : '/student'
-    navigate(from && from.startsWith(home) ? from : home, { replace: true })
+      const { data: nextProfile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .maybeSingle()
+
+      if (profileError || (nextProfile?.role !== 'student' && nextProfile?.role !== 'teacher')) {
+        await supabase.auth.signOut()
+        if (profileError && isNetworkFailure(profileError)) return setError(NETWORK_TIMEOUT_MESSAGE)
+        return setError('登录没有完成，请稍后再试')
+      }
+
+      if (nextProfile.role !== role) {
+        setRole(nextProfile.role)
+        setPassword('')
+        return setError(
+          nextProfile.role === 'teacher'
+            ? '这个账号是教师账号，可以直接进入教师工作台'
+            : '这个账号是学生账号，可以直接进入学生练习',
+        )
+      }
+
+      const from = location.state?.from
+      const home = nextProfile.role === 'teacher' ? '/teacher' : '/student'
+      navigate(from && from.startsWith(home) ? from : home, { replace: true })
+    } catch (error) {
+      setError(loginErrorText(error))
+    } finally {
+      setLoading(false)
+    }
   }
 
   const inputClass =
