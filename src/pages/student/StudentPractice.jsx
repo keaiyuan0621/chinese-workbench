@@ -221,7 +221,7 @@ export default function StudentPractice() {
   }
 
   return (
-    <div className="space-y-5 pb-28">
+    <div className="space-y-6 pb-[calc(9.5rem+env(safe-area-inset-bottom))]">
       <header>
         <h1 className="text-3xl text-ink">自由组卷</h1>
       </header>
@@ -232,10 +232,10 @@ export default function StudentPractice() {
         </div>
       )}
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         <div
           data-tab-scroller
-          className="flex min-w-0 flex-1 gap-1 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex min-w-0 flex-1 gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {TABS.map((name) => {
             const on = tab === name
@@ -246,7 +246,7 @@ export default function StudentPractice() {
                 role="tab"
                 aria-selected={on}
                 onClick={() => setTab(name)}
-                className={`shrink-0 rounded-full px-5 py-2.5 text-lg transition-colors ${
+                className={`inline-flex min-h-11 shrink-0 items-center rounded-full px-3 py-2 text-sm transition-colors sm:px-5 sm:text-lg ${
                   on ? 'bg-coral-100 font-semibold text-coral-600' : 'bg-transparent font-medium text-gray-500'
                 }`}
               >
@@ -278,7 +278,7 @@ export default function StudentPractice() {
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
-            <div className="space-y-4 rounded-student bg-white px-4 py-4 ring-1 ring-lavender-100">
+            <div className="space-y-5 rounded-student bg-white px-4 py-5 ring-1 ring-lavender-100 sm:px-5">
               <FilterRow title="题型">
                 {QUESTION_TYPES.map((type) => (
                   <Choice key={type} on={types.has(type)} onClick={() => toggleValue(setTypes, type)}>
@@ -315,8 +315,8 @@ export default function StudentPractice() {
       </AnimatePresence>
 
       {createPortal(
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-lavender-100 bg-white/95 px-4 py-3 shadow-[0_-8px_24px_rgba(155,123,255,0.12)] backdrop-blur">
-          <div className="mx-auto flex max-w-7xl items-center gap-3">
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-lavender-100 bg-white/95 px-4 pt-3 shadow-[0_-8px_24px_rgba(155,123,255,0.12)] backdrop-blur pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-6">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center">
             <p className="min-w-0 flex-1 text-base leading-snug text-gray-600">
               {picked.size === 0 ? '全部题库，匹配 ' : `已选 ${picked.size} 个知识点，匹配 `}
               <span className="relative inline-flex h-8 min-w-8 items-center overflow-hidden align-bottom">
@@ -340,7 +340,7 @@ export default function StudentPractice() {
               onClick={() => generate()}
               disabled={starting}
               whileTap={{ scale: 0.95 }}
-              className="inline-flex min-h-16 shrink-0 items-center justify-center rounded-full bg-mint-500 px-6 text-lg font-bold text-white shadow-lg shadow-mint-100 hover:bg-mint-600 disabled:cursor-not-allowed disabled:opacity-50 sm:px-8 sm:text-xl"
+              className="inline-flex h-12 w-full shrink-0 items-center justify-center rounded-full bg-mint-500 px-6 text-base font-bold text-white shadow-lg shadow-mint-100 hover:bg-mint-600 disabled:cursor-not-allowed disabled:opacity-50 sm:h-16 sm:w-auto sm:px-8 sm:text-xl"
             >
               {starting ? '正在生成…' : '生成专属试卷'}
             </motion.button>

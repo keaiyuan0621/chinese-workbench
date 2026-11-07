@@ -22,7 +22,7 @@ export default function QuestionCard({ question, value, onChange, onCommit, pend
   const instant = question.type === '单选' || question.type === '判断'
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <header className="flex flex-wrap items-center gap-2 pr-12 text-sm">
         <span className={`rounded-full px-2.5 py-1 font-semibold ${TYPE_STYLE[question.type] ?? ''}`}>
           {QUESTION_TYPE_LABEL[question.type] ?? question.type}
@@ -115,7 +115,7 @@ function MatchGrid({ question, value, onChange, submitted }) {
   }
 
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-4">
       <div className="grid grid-cols-[1fr_1fr] gap-3 text-xs text-gray-400 px-1">
         <span>左列</span>
         <span>请选择对应项</span>
@@ -175,7 +175,7 @@ function Options({ question, value, onChange, onCommit, pending, submitted }) {
   }
 
   return (
-    <ul className="space-y-2.5">
+    <ul className="space-y-4">
       {(question.options ?? []).map((opt) => {
         const isSel = multi ? selected.has(opt.key) : selected === opt.key
         const isRight = correctKeys.has(opt.key)
@@ -193,7 +193,7 @@ function Options({ question, value, onChange, onCommit, pending, submitted }) {
               onClick={() => pickKey(opt.key)}
               disabled={locked}
               aria-busy={pending && isSel ? true : undefined}
-              className={`flex w-full items-start gap-3 rounded-student-sm px-4 py-3 text-left ring-1 transition-colors disabled:cursor-default ${cls}`}
+              className={`flex min-h-14 w-full items-start gap-3 rounded-student-sm px-4 py-4 text-left ring-1 transition-colors disabled:cursor-default ${cls}`}
             >
               <span
                 className={`shrink-0 h-7 w-7 rounded-full flex items-center justify-center text-sm font-semibold ${
@@ -230,7 +230,7 @@ function Judge({ question, value, onChange, onCommit, pending, submitted }) {
   ]
   const locked = submitted || pending
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 gap-4">
       {items.map(({ v, label, icon }) => {
         const isSel = value === v
         const isRight = Boolean(question.answer) === v
@@ -252,7 +252,7 @@ function Judge({ question, value, onChange, onCommit, pending, submitted }) {
               onChange(v)
               onCommit?.(v)
             }}
-            className={`rounded-student-sm py-4 ring-1 text-lg font-semibold text-gray-800 transition-colors disabled:cursor-default ${cls}`}
+            className={`min-h-16 rounded-student-sm px-3 py-4 ring-1 text-lg font-semibold text-gray-800 transition-colors disabled:cursor-default ${cls}`}
           >
             <span className="mr-2 text-gray-400">{icon}</span>
             {label}
@@ -281,7 +281,7 @@ function Blanks({ question, value, onChange, submitted }) {
   }
 
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-4">
       {expected.map((_, i) => (
         <div key={i} className="flex items-center gap-3">
           <span className="shrink-0 text-sm text-gray-400 w-12">第 {i + 1} 空</span>

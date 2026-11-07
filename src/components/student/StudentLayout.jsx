@@ -24,7 +24,7 @@ export default function StudentLayout() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-paper font-ui text-ink">
       <header className="sticky top-0 z-20 border-b border-gold/70 bg-white/80 backdrop-blur">
-        <div className="flex w-full flex-col gap-3 px-6 py-3 md:px-10 lg:flex-row lg:items-center lg:gap-6 xl:px-12 lg:py-4">
+        <div className="flex w-full flex-col gap-4 px-4 py-4 sm:px-6 md:px-10 lg:flex-row lg:items-center lg:gap-6 xl:px-12 lg:py-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <InkSeal className="h-12 w-14 shrink-0" />
@@ -39,14 +39,17 @@ export default function StudentLayout() {
             </div>
           </div>
 
-          <nav className="grid grid-cols-2 gap-2 lg:flex lg:flex-1 lg:justify-center lg:gap-2">
+          <nav
+            aria-label="学生导航"
+            className="student-nav flex w-full min-w-0 gap-2 overflow-x-auto overscroll-x-contain pb-1 [-ms-overflow-style:none] [scrollbar-width:none] lg:flex-1 lg:justify-center lg:gap-3 lg:overflow-visible lg:pb-0 [&::-webkit-scrollbar]:hidden"
+          >
             {NAV.map((n) => (
               <NavLink
                 key={n.to}
                 to={n.to}
                 end={n.end}
                 className={({ isActive }) =>
-                  `book-title inline-flex min-h-11 items-center justify-center rounded-lg px-3 py-2.5 text-base transition-colors lg:min-h-12 lg:px-5 lg:py-3 lg:text-lg ${
+                  `book-title inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg px-3 py-2 text-sm transition-colors sm:text-base lg:min-h-12 lg:px-5 lg:py-3 lg:text-lg ${
                     isActive
                       ? 'bg-peach text-ink'
                       : 'text-ink/70 hover:bg-peach/50'
@@ -64,7 +67,7 @@ export default function StudentLayout() {
         </div>
       </header>
 
-      <main className="w-full px-6 py-6 md:px-10 md:py-8 xl:px-12">
+      <main className="w-full px-4 py-6 sm:px-6 sm:py-8 md:px-10 md:py-8 xl:px-12">
         <Outlet />
       </main>
     </div>

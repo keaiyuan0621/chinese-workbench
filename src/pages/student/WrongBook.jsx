@@ -184,7 +184,7 @@ export default function WrongBook() {
         </motion.button>
       </header>
 
-      <section className="space-y-2">
+      <section className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="inline-flex rounded-full bg-gray-100 p-1">
             <StatusTab on={tab === 'open'} tone="open" onClick={() => setTab('open')}>
@@ -273,7 +273,7 @@ export default function WrongBook() {
         </div>
       )}
 
-      <ul className="space-y-3">
+      <ul className="space-y-5">
         <AnimatePresence initial={false}>
           {list.map((item) => {
             const q = item.question
@@ -329,7 +329,7 @@ export default function WrongBook() {
                     >
                       <div className="p-5 space-y-3 text-sm bg-cream-50/50">
                         {Array.isArray(q.options) && q.options.length > 0 && (
-                          <ul className="space-y-1 text-gray-700">
+                          <ul className="space-y-3 text-gray-700">
                             {q.options.map((o) => (
                               <li key={o.key}>
                                 <span className="font-semibold mr-1.5">{o.key}.</span>
@@ -372,7 +372,7 @@ export default function WrongBook() {
                             type="button"
                             disabled={busyId === item.id}
                             onClick={() => toggleMastered(item)}
-                            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors disabled:opacity-60 ${
+                            className={`inline-flex min-h-11 items-center rounded-full px-4 text-sm font-medium transition-colors disabled:opacity-60 ${
                               item.mastered
                                 ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                 : 'bg-mint-400 text-white hover:bg-mint-500'

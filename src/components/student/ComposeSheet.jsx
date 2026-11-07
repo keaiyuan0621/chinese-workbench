@@ -344,7 +344,7 @@ export default function ComposeSheet({ point, onClose }) {
           )}
         </div>
 
-        <footer className="shrink-0 bg-white/80 px-5 py-4 sm:px-6">
+        <footer className="shrink-0 bg-white/80 px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">
           <motion.button
             type="button"
             disabled={starting || available == null}

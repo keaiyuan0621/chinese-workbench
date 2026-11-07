@@ -385,8 +385,10 @@ export default function PracticeSession() {
     return <ResultPanel summary={summary} onRetry={handleRetry} retrying={retrying} />
   }
 
+  const showAction = Boolean(result) || !instant
+
   return (
-    <div className="space-y-6">
+    <div className={showAction ? 'space-y-6 pb-28' : 'space-y-6'}>
       <PetalRain petals={petals} />
       <FeedbackToast toast={toast} />
       <ProgressBar current={answeredCount} total={total} />
@@ -401,7 +403,7 @@ export default function PracticeSession() {
           >
             <motion.div
               animate={cardControls}
-              className="relative rounded-student bg-white p-6 sm:p-8 shadow-sm ring-1 ring-lavender-100"
+              className="relative rounded-student bg-white px-6 py-8 shadow-sm ring-1 ring-lavender-100 sm:p-8"
             >
               <button
                 type="button"
@@ -433,37 +435,37 @@ export default function PracticeSession() {
         </div>
       )}
 
-      <div className="flex items-center justify-end">
-        {result ? (
-          <motion.button
-            type="button"
-            onClick={handleNext}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="rounded-full bg-lavender-500 px-8 py-3 font-semibold text-white shadow-md shadow-lavender-100 hover:bg-lavender-600"
-          >
-            {index + 1 >= total ? '查看结果' : '下一题'}
-          </motion.button>
-        ) : instant ? null : (
-          <motion.button
-            type="button"
-            onClick={() => { handleSubmit().catch(() => {}) }}
-            disabled={submitting}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="rounded-full bg-coral-500 px-8 py-3 font-semibold text-white shadow-md shadow-coral-100 hover:bg-coral-600 disabled:opacity-60"
-          >
-            {submitting ? '提交中…' : '提交答案'}
-          </motion.button>
-        )}
-      </div>
+      {showAction && (
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-gold/50 bg-paper/95 px-4 pt-3 backdrop-blur-md pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-6">
+          {result ? (
+            <motion.button
+              type="button"
+              onClick={handleNext}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileTap={{ scale: 0.98 }}
+              className="mx-auto flex h-12 w-full max-w-3xl items-center justify-center rounded-full bg-lavender-500 px-8 text-base font-semibold text-white shadow-md shadow-lavender-100 hover:bg-lavender-600"
+            >
+              {index + 1 >= total ? '查看结果' : '下一题'}
+            </motion.button>
+          ) : (
+            <motion.button
+              type="button"
+              onClick={() => { handleSubmit().catch(() => {}) }}
+              disabled={submitting}
+              whileTap={{ scale: 0.98 }}
+              className="mx-auto flex h-12 w-full max-w-3xl items-center justify-center rounded-full bg-coral-500 px-8 text-base font-semibold text-white shadow-md shadow-coral-100 hover:bg-coral-600 disabled:opacity-60"
+            >
+              {submitting ? '提交中…' : '提交答案'}
+            </motion.button>
+          )}
+        </div>
+      )}
 
       <ComboBadge combo={combo} />
 
       {leaveOpen && (
-        <div className="fixed inset-0 z-40 flex items-end justify-center bg-ink/30 px-4 py-6 sm:items-center">
+        <div className="fixed inset-0 z-40 flex items-end justify-center bg-ink/30 px-4 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:items-center sm:py-6">
           <div
             ref={leaveRef}
             role="dialog"

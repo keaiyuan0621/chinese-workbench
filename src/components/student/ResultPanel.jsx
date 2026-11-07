@@ -26,7 +26,7 @@ export default function ResultPanel({ summary, onRetry, retrying }) {
       <motion.section
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-student bg-white p-8 shadow-sm ring-1 ring-coral-100 text-center"
+        className="rounded-student bg-white px-5 py-8 text-center shadow-sm ring-1 ring-coral-100 sm:p-8"
       >
         <p className="text-sm text-gray-500">本次练习完成</p>
 
@@ -56,26 +56,26 @@ export default function ResultPanel({ summary, onRetry, retrying }) {
           <Stat label="待批改" value={pending} tone="text-sky-600" />
         </div>
 
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
+        <div className="mt-6 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
           <motion.button
             type="button"
             onClick={onRetry}
             disabled={retrying}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="rounded-full bg-coral-500 text-white font-semibold px-6 py-2.5 shadow-md shadow-coral-100 hover:bg-coral-600 disabled:opacity-60"
+            className="inline-flex h-12 items-center justify-center rounded-full bg-coral-500 px-6 text-base font-semibold text-white shadow-md shadow-coral-100 hover:bg-coral-600 disabled:opacity-60"
           >
             {retrying ? '正在生成…' : '再练一次'}
           </motion.button>
           <Link
             to="/student/wrong-book"
-            className="rounded-full bg-cream-100 text-cream-600 font-semibold px-6 py-2.5 hover:bg-cream-300 transition-colors"
+            className="inline-flex h-12 items-center justify-center rounded-full bg-cream-100 px-6 text-base font-semibold text-cream-600 transition-colors hover:bg-cream-300"
           >
             我的错题
           </Link>
           <Link
             to="/student"
-            className="rounded-full bg-gray-100 text-gray-600 font-semibold px-6 py-2.5 hover:bg-gray-200 transition-colors"
+            className="inline-flex h-12 items-center justify-center rounded-full bg-gray-100 px-6 text-base font-semibold text-gray-600 transition-colors hover:bg-gray-200"
           >
             回到知识闯关
           </Link>
@@ -83,7 +83,7 @@ export default function ResultPanel({ summary, onRetry, retrying }) {
       </motion.section>
 
       {wrong.length > 0 && (
-        <section className="space-y-3">
+        <section className="space-y-4">
           <h2 className="text-lg font-bold text-gray-800">需要再看看的题目</h2>
           {wrong.map((q, i) => (
             <motion.article

@@ -228,12 +228,12 @@ export default function StudentHome() {
             {profile?.class_name ? ` · ${profile.class_name}` : ''}
             {profile?.student_no ? ` · 学号 ${profile.student_no}` : ''}
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-3">
             {QUICK_TEMPLATES.map((item) => (
               <Link
                 key={item.id}
                 to={`/student/practice?template=${item.id}`}
-                className="rounded-lg border-[0.5px] border-gold bg-white/80 px-4 py-2 text-base text-ink hover:bg-peach/40"
+                className="inline-flex min-h-11 items-center rounded-lg border-[0.5px] border-gold bg-white/80 px-4 py-2 text-base text-ink hover:bg-peach/40"
               >
                 {item.label}
               </Link>
@@ -252,7 +252,7 @@ export default function StudentHome() {
 
         {ready && (
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <nav aria-label="章节导航" className="flex flex-wrap gap-2">
+            <nav aria-label="章节导航" className="flex w-full min-w-0 gap-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {chapters.map((chapter, index) => {
                 const current = index === activeIndex
                 return (
@@ -261,7 +261,7 @@ export default function StudentHome() {
                     type="button"
                     aria-current={current ? 'true' : undefined}
                     onClick={() => goTo(index)}
-                    className={`min-h-11 rounded-full border-[0.5px] px-4 text-base ${FOCUS} ${
+                    className={`inline-flex min-h-11 shrink-0 items-center rounded-full border-[0.5px] px-3 py-2 text-sm sm:px-4 sm:text-base ${FOCUS} ${
                       current
                         ? 'border-ink bg-peach text-ink'
                         : 'border-gold bg-white/80 text-ink/70 hover:bg-peach/40'
@@ -528,7 +528,7 @@ function SectionChips({ section, counts, onPick }) {
     return <p className="text-sm text-ink/50">该模块下暂无三级知识点</p>
   }
   return (
-    <ul className="flex flex-wrap gap-2.5">
+    <ul className="flex flex-wrap gap-3">
       {own > 0 && (
         <li>
           <KnowledgeChip kp={section} counts={counts} onPick={onPick} label="综合练习" />

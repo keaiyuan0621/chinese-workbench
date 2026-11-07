@@ -95,14 +95,14 @@ export default function Materials() {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <header>
         <h1 className="book-title text-2xl text-ink">资料宝库</h1>
         <p className="mt-1 text-sm text-gray-500">先选分类，再按需要打开。练习为主，资料为辅</p>
       </header>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           {TABS.map((tab) => {
             const on = category === tab
             return (
@@ -110,7 +110,7 @@ export default function Materials() {
                 key={tab}
                 type="button"
                 onClick={() => setCategory(tab)}
-                className={`inline-flex min-h-10 items-center rounded-full px-4 text-sm font-medium ring-1 transition-colors ${
+                className={`inline-flex min-h-11 items-center rounded-full px-4 py-2 text-sm font-medium ring-1 transition-colors ${
                   on ? TAB_STYLE[tab] : 'bg-white text-gray-500 ring-coral-100 hover:bg-coral-50'
                 }`}
               >
@@ -170,41 +170,45 @@ export default function Materials() {
       )}
 
       {visible.length > 0 && (
-        <ul className="overflow-hidden rounded-student bg-white ring-1 ring-coral-100 divide-y divide-coral-50">
+        <ul className="space-y-4">
           {visible.map((m) => {
             const ext = m.file_type?.toLowerCase()
             return (
-              <li key={m.id} className="flex items-center gap-3 px-3 py-2.5 sm:px-4">
-                <span className="shrink-0 text-xl" aria-hidden>
-                  {FILE_ICON[ext] ?? '📎'}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-gray-800" title={m.title}>
-                    {m.title}
-                  </p>
-                  <p className="mt-0.5 truncate text-xs text-gray-500">
-                    {m.category}
-                    {m.knowledge_point ? ` · ${m.knowledge_point.name}` : ''}
-                    {m.file_size ? ` · ${formatSize(m.file_size)}` : ''}
-                  </p>
-                </div>
-                <div className="flex shrink-0 gap-2">
-                  <button
-                    type="button"
-                    disabled={busy === `${m.id}-v`}
-                    onClick={() => open(m, false)}
-                    className="inline-flex min-h-10 items-center rounded-full bg-mint-100 px-3 text-sm font-medium text-mint-600 hover:bg-mint-300/60 disabled:opacity-60"
-                  >
-                    查看
-                  </button>
-                  <button
-                    type="button"
-                    disabled={busy === `${m.id}-d`}
-                    onClick={() => open(m, true)}
-                    className="inline-flex min-h-10 items-center rounded-full bg-coral-100 px-3 text-sm font-medium text-coral-600 hover:bg-coral-300/50 disabled:opacity-60"
-                  >
-                    下载
-                  </button>
+              <li key={m.id} className="rounded-student bg-white px-4 py-5 sm:px-5">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                  <div className="flex min-w-0 flex-1 items-start gap-3">
+                    <span className="shrink-0 text-xl" aria-hidden>
+                      {FILE_ICON[ext] ?? '📎'}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-base font-medium text-gray-800" title={m.title}>
+                        {m.title}
+                      </p>
+                      <p className="mt-1 text-sm text-gray-500">
+                        {m.category}
+                        {m.knowledge_point ? ` · ${m.knowledge_point.name}` : ''}
+                        {m.file_size ? ` · ${formatSize(m.file_size)}` : ''}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-3 sm:flex-row sm:shrink-0">
+                    <button
+                      type="button"
+                      disabled={busy === `${m.id}-v`}
+                      onClick={() => open(m, false)}
+                      className="inline-flex h-12 items-center justify-center rounded-full bg-mint-100 px-4 text-base font-medium text-mint-600 hover:bg-mint-300/60 disabled:opacity-60"
+                    >
+                      查看
+                    </button>
+                    <button
+                      type="button"
+                      disabled={busy === `${m.id}-d`}
+                      onClick={() => open(m, true)}
+                      className="inline-flex h-12 items-center justify-center rounded-full bg-coral-100 px-4 text-base font-medium text-coral-600 hover:bg-coral-300/50 disabled:opacity-60"
+                    >
+                      下载
+                    </button>
+                  </div>
                 </div>
               </li>
             )
