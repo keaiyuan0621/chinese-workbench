@@ -228,6 +228,39 @@ export function checkAnswer(question, value) {
   }
 }
 
+function optionLine(question, key) {
+  const opt = question.options?.find((item) => item.key === key)
+  return opt ? `${opt.key}. ${opt.text}` : String(key ?? '')
+}
+
+/** 把学生的作答格式化成可读文本。未作答时返回空字符串。 */
+export function formatStudentAnswer(question, value) {
+  if (value == null || value === '') return ''
+  switch (question.type) {
+    case '单选':
+      return optionLine(question, value)
+    case '多选': {
+      const keys = Array.isArray(value) ? value : []
+      return keys.map((key) => optionLine(question, key)).join('；')
+    }
+    case '判断':
+      return typeof value === 'boolean' ? (value ? '对' : '错') : ''
+    case '填空': {
+      const list = Array.isArray(value) ? value : [value]
+      if (list.every((item) => String(item ?? '').trim() === '')) return ''
+      return list.map((item, index) => `第 ${index + 1} 空：${item}`).join('；')
+    }
+    case 'match': {
+      const pairs = Object.entries(matchAnswerMap(value, matchColumns(question).left)).filter(([, right]) =>
+        String(right).trim(),
+      )
+      return pairs.map(([left, right]) => `${left} → ${right}`).join('；')
+    }
+    default:
+      return String(value).trim()
+  }
+}
+
 /** 把标准答案格式化成可读文本 */
 export function formatAnswer(question) {
   const { type, answer, options } = question

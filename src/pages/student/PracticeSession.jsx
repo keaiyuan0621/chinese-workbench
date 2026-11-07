@@ -1,8 +1,9 @@
 import { AnimatePresence, motion, useAnimationControls } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import QuestionCard from '../../components/student/QuestionCard.jsx'
 import ResultPanel from '../../components/student/ResultPanel.jsx'
+import SessionReview from '../../components/student/SessionReview.jsx'
 import {
   ComboBadge,
   FeedbackToast,
@@ -67,6 +68,8 @@ export default function PracticeSession() {
   const { id } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const reviewing = searchParams.get('review') === '1'
   const { user } = useAuth()
 
   const [session, setSession] = useState(null)
@@ -329,6 +332,18 @@ export default function PracticeSession() {
     }
   }
 
+  function openReview() {
+    setSearchParams({ review: '1' })
+  }
+
+  function closeReview() {
+    if (location.state?.from === 'history') {
+      navigate('/student/wrong-book')
+      return
+    }
+    setSearchParams({}, { replace: true })
+  }
+
   async function handleRetry() {
     if (!user || !questions) return
     setRetrying(true)
@@ -373,6 +388,10 @@ export default function PracticeSession() {
     )
   }
 
+  if (reviewing && questions.length) {
+    return <SessionReview questions={questions} answers={answers} onBack={closeReview} />
+  }
+
   if (questions.length === 0 || !current) {
     return (
       <div className="rounded-student bg-white px-6 py-10 text-center text-gray-400 ring-1 ring-gray-100">
@@ -382,7 +401,7 @@ export default function PracticeSession() {
   }
 
   if (finished && summary) {
-    return <ResultPanel summary={summary} onRetry={handleRetry} retrying={retrying} />
+    return <ResultPanel summary={summary} onRetry={handleRetry} onReview={openReview} retrying={retrying} />
   }
 
   const showAction = Boolean(result) || !instant

@@ -5,7 +5,7 @@ import InkSeal from './InkSeal.jsx'
 const NAV = [
   { to: '/student', label: '知识闯关', end: true },
   { to: '/student/practice', label: '自由组卷' },
-  { to: '/student/wrong-book', label: '我的错题' },
+  { to: '/student/wrong-book', label: '我的题集' },
   { to: '/student/materials', label: '资料宝库' },
 ]
 

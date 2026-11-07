@@ -296,7 +296,7 @@ export async function fetchSessionAnswers(sessionId) {
   return unwrap(
     await supabase
       .from('answer_details')
-      .select('id, question_id, student_answer, is_correct, needs_review, ai_score, final_score, created_at')
+      .select('id, question_id, student_answer, is_correct, needs_review, ai_score, ai_feedback, final_score, created_at')
       .eq('session_id', sessionId)
       .order('created_at', { ascending: true }),
   )
@@ -323,6 +323,46 @@ export async function updatePracticeConfig(id, config) {
   return unwrap(
     await supabase.from('practice_sessions').update({ config }).eq('id', id).select('id, config').single(),
   )
+}
+
+/** 学生的全部练习批次，附带题量、答对数、答错数和正确率。 */
+export async function fetchPracticeHistory(studentId) {
+  const [sessions, answers] = await Promise.all([
+    fetchAllRows(() =>
+      supabase
+        .from('practice_sessions')
+        .select('id, question_ids, finished_at, created_at')
+        .eq('student_id', studentId),
+    ),
+    fetchAllRows(() =>
+      supabase.from('answer_details').select('session_id, is_correct').eq('student_id', studentId),
+    ),
+  ])
+
+  const bySession = new Map()
+  for (const row of answers) {
+    const list = bySession.get(row.session_id) ?? []
+    list.push(row)
+    bySession.set(row.session_id, list)
+  }
+
+  return sessions
+    .map((session) => {
+      const rows = bySession.get(session.id) ?? []
+      const total = Array.isArray(session.question_ids) ? session.question_ids.length : 0
+      const correct = rows.filter((row) => row.is_correct === true).length
+      const wrong = rows.filter((row) => row.is_correct === false).length
+      const pct = total ? Math.round((correct / total) * 100) : 0
+      return {
+        ...session,
+        total,
+        correct,
+        wrong,
+        pct,
+        perfect: total > 0 && wrong === 0 && correct === total,
+      }
+    })
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 }
 
 export async function finishPracticeSession(id) {

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { formatAnswer, gradeBadge } from '../../lib/practice.js'
 import { fireFinale } from '../../lib/effects.js'
 
-export default function ResultPanel({ summary, onRetry, retrying }) {
+export default function ResultPanel({ summary, onRetry, onReview, retrying }) {
   const { correct, objective, pending, pct, wrong, gradedShort = 0 } = summary
   const badge = gradeBadge(pct)
 
@@ -57,6 +57,13 @@ export default function ResultPanel({ summary, onRetry, retrying }) {
         </div>
 
         <div className="mt-6 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
+          <button
+            type="button"
+            onClick={onReview}
+            className="inline-flex h-12 items-center justify-center rounded-full bg-ink px-6 text-base font-semibold text-paper"
+          >
+            回顾本次试卷
+          </button>
           <motion.button
             type="button"
             onClick={onRetry}
@@ -71,7 +78,7 @@ export default function ResultPanel({ summary, onRetry, retrying }) {
             to="/student/wrong-book"
             className="inline-flex h-12 items-center justify-center rounded-full bg-cream-100 px-6 text-base font-semibold text-cream-600 transition-colors hover:bg-cream-300"
           >
-            我的错题
+            我的题集
           </Link>
           <Link
             to="/student"
