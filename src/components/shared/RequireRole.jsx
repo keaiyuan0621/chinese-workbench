@@ -2,7 +2,7 @@ import { Link, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../lib/auth-context.js'
 import FullPageLoading from './FullPageLoading.jsx'
 
-const ROLE_LABEL = { student: '学生', teacher: '教师' }
+const ROLE_LABEL = { student: '学生', teacher: '教师', super_admin: '超级管理员' }
 
 function Blocked({ title, desc, onSignOut }) {
   return (
@@ -54,11 +54,13 @@ export default function RequireRole({ role, loginPath, children }) {
     )
   }
 
-  if (profile.role !== role) {
+  const allowed = Array.isArray(role) ? role : [role]
+  if (!allowed.includes(profile.role)) {
+    const pageName = allowed.map((item) => ROLE_LABEL[item] ?? item).join('、')
     return (
       <Blocked
         title="当前账号无法访问此页面"
-        desc={`这是${ROLE_LABEL[role]}专用页面，当前登录的是${ROLE_LABEL[profile.role] ?? '其他'}账号。`}
+        desc={`这是${pageName}专用页面，当前登录的是${ROLE_LABEL[profile.role] ?? '其他'}账号。`}
         onSignOut={signOut}
       />
     )

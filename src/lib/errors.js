@@ -32,6 +32,7 @@ export function zhError(err, fallback = '操作失败，请稍后再试') {
 
   const msg = String(err.message ?? err)
   if (/row-level security|violates row-level/i.test(msg)) return PG_CODES[42501]
+  if (/[\u4e00-\u9fff]/.test(msg)) return msg
 
   for (const [re, out] of AUTH_RULES) {
     const m = msg.match(re)

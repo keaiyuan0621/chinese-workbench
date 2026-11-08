@@ -1,11 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../lib/auth-context.js'
+import { isStaffRole } from '../../lib/roles.js'
 
 /** 顶部右侧的教师入口：未登录显示「教师登录」，登录后显示姓名和退出。 */
 export default function TeacherAccountSlot() {
   const { profile, loading, signOut } = useAuth()
   const navigate = useNavigate()
-  const teacher = !loading && profile?.role === 'teacher'
+  const teacher = !loading && isStaffRole(profile?.role)
   const label = profile?.display_name?.trim() || '教师工作台'
 
   async function handleSignOut() {

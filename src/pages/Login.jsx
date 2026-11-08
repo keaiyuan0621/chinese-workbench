@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import InkSeal from '../components/student/InkSeal.jsx'
-import { toVirtualEmail } from '../lib/constants.js'
+import { toAccountEmail } from '../lib/constants.js'
 import { useAuth } from '../lib/auth-context.js'
+import { isStaffRole } from '../lib/roles.js'
 import { zhError } from '../lib/errors.js'
 import { supabase } from '../lib/supabase.js'
 
@@ -79,7 +80,7 @@ export default function Login() {
   }, [])
 
   const student = role === 'student'
-  const signedInRole = profile?.role === 'student' || profile?.role === 'teacher' ? profile.role : null
+  const signedInRole = profile?.role === 'student' ? 'student' : isStaffRole(profile?.role) ? 'teacher' : null
   const signedInName = profile?.display_name?.trim() || (signedInRole === 'teacher' ? '教师' : '学生')
 
   function chooseRole(next) {
@@ -100,7 +101,7 @@ export default function Login() {
     if (!acc) return setError(student ? '请输入学号' : '请输入账号')
     if (!password) return setError('请输入密码')
 
-    const email = student || !acc.includes('@') ? toVirtualEmail(acc) : acc
+    const email = toAccountEmail(acc, { forceVirtual: student })
 
     console.log('VITE_SUPABASE_URL', import.meta.env.VITE_SUPABASE_URL)
     console.log('VITE_SUPABASE_ANON_KEY', import.meta.env.VITE_SUPABASE_ANON_KEY)
@@ -119,24 +120,25 @@ export default function Login() {
         .eq('id', data.user.id)
         .maybeSingle()
 
-      if (profileError || (nextProfile?.role !== 'student' && nextProfile?.role !== 'teacher')) {
+      const accountIsStaff = isStaffRole(nextProfile?.role)
+      if (profileError || (!accountIsStaff && nextProfile?.role !== 'student')) {
         await supabase.auth.signOut()
         if (profileError && isNetworkFailure(profileError)) return setError(NETWORK_TIMEOUT_MESSAGE)
         return setError('登录没有完成，请稍后再试')
       }
 
-      if (nextProfile.role !== role) {
-        setRole(nextProfile.role)
+      if (accountIsStaff !== !student) {
+        setRole(accountIsStaff ? 'teacher' : 'student')
         setPassword('')
         return setError(
-          nextProfile.role === 'teacher'
+          accountIsStaff
             ? '这个账号是教师账号，可以直接进入教师工作台'
             : '这个账号是学生账号，可以直接进入学生练习',
         )
       }
 
       const from = location.state?.from
-      const home = nextProfile.role === 'teacher' ? '/teacher' : '/student'
+      const home = accountIsStaff ? '/teacher' : '/student'
       navigate(from && from.startsWith(home) ? from : home, { replace: true })
     } catch (error) {
       setError(loginErrorText(error))

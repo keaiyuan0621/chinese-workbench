@@ -65,6 +65,14 @@ export function toVirtualEmail(studentNo) {
   return `${String(studentNo).trim().toLowerCase()}@${VIRTUAL_EMAIL_DOMAIN}`
 }
 
+/** 登录账号：已经带 @ 的原样使用，纯数字或其他账号自动补 @chinese.local。 */
+export function toAccountEmail(account, { forceVirtual = false } = {}) {
+  const value = String(account ?? '').trim()
+  if (!value) return ''
+  if (!forceVirtual && value.includes('@')) return value
+  return toVirtualEmail(value)
+}
+
 /** 学生端各章节配色（马卡龙） */
 export const CHAPTER_THEME = {
   语音: {

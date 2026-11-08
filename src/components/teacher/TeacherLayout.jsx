@@ -1,17 +1,29 @@
 import { NavLink, Outlet } from 'react-router-dom'
+import { useAuth } from '../../lib/auth-context.js'
+import { isSuperAdmin } from '../../lib/roles.js'
 import TeacherAccountSlot from './TeacherAccountSlot.jsx'
 
-const NAV = [
+const TEACHER_NAV = [
+  { to: '/teacher', label: '数据看板', end: true },
+  { to: '/teacher/questions', label: '题库' },
+  { to: '/teacher/papers', label: '组卷' },
+]
+
+const ADMIN_NAV = [
   { to: '/teacher', label: '数据看板', end: true },
   { to: '/teacher/classes', label: '班级管理' },
   { to: '/teacher/materials', label: '资料管理' },
   { to: '/teacher/questions', label: '题库' },
   { to: '/teacher/papers', label: '组卷' },
   { to: '/teacher/review', label: '简答复核' },
+  { to: '/teacher/staff', label: '教师管理' },
 ]
 
-/** 教师端外壳：中性灰白 + 深蓝，小圆角，侧边导航，高信息密度 */
+/** 教师端外壳：宣纸底、墨色侧栏。教师管理只给超级管理员。 */
 export default function TeacherLayout() {
+  const { profile } = useAuth()
+  const nav = isSuperAdmin(profile?.role) ? ADMIN_NAV : TEACHER_NAV
+
   return (
     <div className="min-h-screen flex bg-paper font-ui text-ink">
       <aside className="w-56 shrink-0 bg-ink text-white/80 flex flex-col print:hidden">
@@ -20,7 +32,7 @@ export default function TeacherLayout() {
         </div>
 
         <nav className="flex-1 py-3">
-          {NAV.map((item) => (
+          {nav.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
