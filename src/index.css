@@ -222,11 +222,18 @@ h1,
   border-radius: 0.5rem;
 }
 
-/* 隐藏 Netlify 默认悬浮徽标 */
-#netlify-badge {
+/* Netlify 在页面边缘注入的推广浮层，手机上会挡住题目 */
+#nl-badge-frame,
+#nl-hud-frame,
+#netlify-badge,
+.netlify-badge,
+iframe[title='Powered by Netlify'] {
   display: none !important;
-}
-/* 如果上面的 ID 不行，也加上这个类名 */
-.netlify-badge {
-  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  max-width: 0 !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
 }

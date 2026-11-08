@@ -15,6 +15,22 @@
       rel="stylesheet"
     />
     <title>现代汉语课程工作台</title>
+    <script>
+      (function () {
+        var ids = ['nl-badge-frame', 'nl-hud-frame', 'netlify-badge']
+        function stripNetlifyBadge() {
+          for (var i = 0; i < ids.length; i++) {
+            var el = document.getElementById(ids[i])
+            if (el) el.remove()
+          }
+        }
+        stripNetlifyBadge()
+        new MutationObserver(stripNetlifyBadge).observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        })
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
