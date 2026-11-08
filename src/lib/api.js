@@ -515,7 +515,7 @@ export async function fetchStudentRoster() {
   return unwrap(
     await supabase
       .from('profiles')
-      .select('id, display_name, student_no, class_name')
+      .select('id, display_name, student_no, class_id, class_name')
       .eq('role', 'student')
       .order('class_name', { ascending: true })
       .order('student_no', { ascending: true }),

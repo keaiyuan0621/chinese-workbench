@@ -1,12 +1,19 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   createClass,
   deleteClass,
   fetchClasses,
   fetchStudentCountsByClass,
+  fetchStudentRoster,
 } from '../../lib/api.js'
 import { useAuth } from '../../lib/auth-context.js'
 import { zhError } from '../../lib/errors.js'
+import {
+  downloadImportTemplate,
+  exportClassRoster,
+  importStudents,
+  readRosterFile,
+} from '../../lib/rosterImport.js'
 
 const MAX_NAME_LEN = 30
 
@@ -35,14 +42,28 @@ export default function TeacherClasses() {
   const [deleting, setDeleting] = useState(false)
   const [notice, setNotice] = useState('') // 顶部操作结果提示
 
+  const [roster, setRoster] = useState(null)
+  const [selectedId, setSelectedId] = useState(null)
+  const [importing, setImporting] = useState(false)
+  const [progress, setProgress] = useState(null)
+  const [importSummary, setImportSummary] = useState(null)
+  const [importError, setImportError] = useState('')
+  const fileRef = useRef(null)
+
   const load = useCallback(async () => {
     try {
-      const [rows, c] = await Promise.all([fetchClasses(), fetchStudentCountsByClass()])
+      const [rows, c, students] = await Promise.all([
+        fetchClasses(),
+        fetchStudentCountsByClass(),
+        fetchStudentRoster(),
+      ])
       setClasses(rows)
       setCounts(c)
+      setRoster(students)
       setLoadError('')
     } catch (err) {
       setClasses([])
+      setRoster([])
       setLoadError(zhError(err, '班级列表加载失败，请刷新重试'))
     }
   }, [])
@@ -56,6 +77,11 @@ export default function TeacherClasses() {
     const t = setTimeout(() => setNotice(''), 2500)
     return () => clearTimeout(t)
   }, [notice])
+
+  useEffect(() => {
+    if (!classes?.length) return
+    if (!classes.some((item) => item.id === selectedId)) setSelectedId(classes[0].id)
+  }, [classes, selectedId])
 
   async function handleAdd(e) {
     e.preventDefault()
@@ -96,6 +122,45 @@ export default function TeacherClasses() {
       setNotice(zhError(err, '删除失败，请稍后再试'))
     } finally {
       setDeleting(false)
+    }
+  }
+
+  const selected = classes?.find((item) => item.id === selectedId) ?? null
+  const students = (roster ?? []).filter((student) => student.class_id === selectedId)
+
+  async function handleImportFile(event) {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) return
+    if (!selected) {
+      setImportError('请先点选要导入的班级')
+      return
+    }
+    setImportError('')
+    setImportSummary(null)
+    setImporting(true)
+    setProgress({ done: 0, total: 1 })
+    try {
+      const parsed = await readRosterFile(file)
+      const total = parsed.students.length + parsed.errors.length
+      if (total === 0) {
+        setImportError('没有读到姓名和学号，请先下载导入模板')
+        return
+      }
+      const summary = await importStudents({
+        students: parsed.students,
+        errors: parsed.errors,
+        classId: selected.id,
+        className: selected.name,
+        onProgress: setProgress,
+      })
+      setImportSummary(summary)
+      await load()
+    } catch (err) {
+      setImportError(zhError(err, '没能读取这份名单，请换用模板再试'))
+    } finally {
+      setImporting(false)
+      setProgress(null)
     }
   }
 
@@ -202,8 +267,13 @@ export default function TeacherClasses() {
             <tbody className="divide-y divide-gray-100">
               {classes.map((c, i) => {
                 const n = counts[c.id] ?? 0
+                const on = c.id === selectedId
                 return (
-                  <tr key={c.id} className="hover:bg-gray-50">
+                  <tr
+                    key={c.id}
+                    onClick={() => setSelectedId(c.id)}
+                    className={`cursor-pointer ${on ? 'bg-navy-50' : 'hover:bg-gray-50'}`}
+                  >
                     <td className="px-4 py-2.5 text-gray-400">{i + 1}</td>
                     <td className="px-4 py-2.5 text-gray-800 font-medium">{c.name}</td>
                     <td className="px-4 py-2.5 text-right tabular-nums text-gray-700">{n}</td>
@@ -211,7 +281,10 @@ export default function TeacherClasses() {
                     <td className="px-4 py-2.5 text-right">
                       <button
                         type="button"
-                        onClick={() => setPendingDelete(c)}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          setPendingDelete(c)
+                        }}
                         className="text-red-600 hover:text-red-700 hover:underline"
                       >
                         删除
@@ -223,6 +296,113 @@ export default function TeacherClasses() {
             </tbody>
           </table>
         )}
+      </section>
+
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-base font-semibold text-navy-800">
+              {selected ? `${selected.name}的学生名单` : '学生名单'}
+            </h2>
+            <p className="mt-1 text-xs text-gray-500">点选上方班级后导入或导出。学生用学号登录，初始密码就是学号。</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              disabled={!selected || roster === null}
+              onClick={() => exportClassRoster(students, selected?.name)}
+              className="rounded-teacher bg-white border border-gray-300 text-gray-700 text-sm px-4 py-2 hover:bg-gray-50 disabled:opacity-50"
+            >
+              导出名单
+            </button>
+            <button
+              type="button"
+              onClick={downloadImportTemplate}
+              className="rounded-teacher bg-white border border-gray-300 text-gray-700 text-sm px-4 py-2 hover:bg-gray-50"
+            >
+              下载导入模板
+            </button>
+            <button
+              type="button"
+              disabled={!selected || importing}
+              onClick={() => fileRef.current?.click()}
+              className="rounded-teacher bg-navy-700 text-white text-sm px-4 py-2 hover:bg-navy-800 disabled:opacity-60"
+            >
+              {importing ? '正在导入…' : '批量导入名单'}
+            </button>
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".xlsx,.xls,.csv,text/csv"
+              className="hidden"
+              onChange={handleImportFile}
+            />
+          </div>
+        </div>
+
+        {progress && progress.total > 0 && (
+          <div className="space-y-1">
+            <div className="h-2 overflow-hidden rounded-full bg-gray-100">
+              <div
+                className="h-full bg-navy-700 transition-all"
+                style={{ width: `${Math.min(100, Math.round((progress.done / progress.total) * 100))}%` }}
+              />
+            </div>
+            <p className="text-xs text-gray-500">
+              正在导入 {progress.done} / {progress.total}
+            </p>
+          </div>
+        )}
+
+        {importError && <p className="text-sm text-red-600">{importError}</p>}
+
+        {importSummary && (
+          <div role="status" className="rounded-teacher bg-navy-50 border border-navy-100 px-4 py-3 text-sm text-navy-800">
+            <p>
+              成功导入 {importSummary.ok} 人，失败 {importSummary.failed} 人（学号已存在等）
+            </p>
+            {importSummary.details.length > 0 && (
+              <ul className="mt-2 space-y-1 text-xs text-navy-700">
+                {importSummary.details.slice(0, 8).map((item, index) => (
+                  <li key={`${item.studentNo ?? item.name}-${index}`}>
+                    {[item.studentNo, item.name].filter(Boolean).join(' ') || '某一行'}：{item.reason}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
+        <div className="rounded-teacher bg-white border border-gray-200 overflow-hidden">
+          {roster === null ? (
+            <div className="p-6 text-sm text-gray-400">加载中…</div>
+          ) : !selected ? (
+            <div className="p-8 text-center text-sm text-gray-400">请先选择一个班级</div>
+          ) : students.length === 0 ? (
+            <div className="p-8 text-center text-sm text-gray-400">这个班还没有学生，可以下载模板后批量导入</div>
+          ) : (
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 text-gray-500 text-left">
+                <tr>
+                  <th className="px-4 py-2.5 font-medium w-12">序号</th>
+                  <th className="px-4 py-2.5 font-medium">姓名</th>
+                  <th className="px-4 py-2.5 font-medium">学号</th>
+                  <th className="px-4 py-2.5 font-medium">班级名称</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {students.map((student, index) => (
+                  <tr key={student.id}>
+                    <td className="px-4 py-2.5 text-gray-400">{index + 1}</td>
+                    <td className="px-4 py-2.5 text-gray-800">{student.display_name}</td>
+                    <td className="px-4 py-2.5 text-gray-700 tabular-nums">{student.student_no}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{student.class_name || selected.name}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       </section>
 
       {pendingDelete && (
