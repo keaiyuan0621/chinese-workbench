@@ -12,11 +12,11 @@ const TEACHER_NAV = [
 const ADMIN_NAV = [
   { to: '/teacher', label: '数据看板', end: true },
   { to: '/teacher/classes', label: '班级管理' },
+  { to: '/teacher/staff', label: '教师管理' },
   { to: '/teacher/materials', label: '资料管理' },
+  { to: '/teacher/review', label: '简答复核' },
   { to: '/teacher/questions', label: '题库' },
   { to: '/teacher/papers', label: '组卷' },
-  { to: '/teacher/review', label: '简答复核' },
-  { to: '/teacher/staff', label: '教师管理' },
 ]
 
 /** 教师端外壳：宣纸底、墨色侧栏。教师管理只给超级管理员。 */
