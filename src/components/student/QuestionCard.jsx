@@ -299,6 +299,13 @@ function Blanks({ question, value, onChange, submitted }) {
   )
 }
 
+function wrongLine(type) {
+  if (type === '填空') return '没填对'
+  if (type === 'match') return '没配对'
+  if (type === '单选' || type === '多选' || type === '判断') return '没选对'
+  return '答错了'
+}
+
 function Explanation({ question, result }) {
   const pending = result.correct === null
   return (
@@ -320,7 +327,7 @@ function Explanation({ question, result }) {
 
       {result.correct === true && <p className="font-semibold text-emerald-700">回答正确</p>}
       {result.correct === false && (
-        <p className="font-semibold text-red-600">这题没有选对，正确答案已用绿色标出</p>
+        <p className="font-semibold text-red-600">{wrongLine(question.type)}</p>
       )}
 
       {pending ? (
