@@ -174,7 +174,6 @@ export default function PracticeSession() {
   const answeredCount = Object.keys(answers).length
   answersRef.current = answers
   valueRef.current = value
-  const instant = current?.type === '单选' || current?.type === '判断'
 
   const summary = useMemo(
     () => (questions ? summarize(questions, answers) : null),
@@ -193,7 +192,7 @@ export default function PracticeSession() {
     const answer = nextValue === undefined ? valueRef.current : nextValue
     if (!current || !user || busyRef.current || result || answersRef.current[current.id]) return
     if (!isAnswered(current.type, answer, current)) {
-      setSubmitError('请先完成作答再提交')
+      setSubmitError('请先完成作答再确认')
       return
     }
     const question = current
@@ -454,7 +453,7 @@ export default function PracticeSession() {
     return <ResultPanel summary={summary} onRetry={handleRetry} onReview={openReview} retrying={retrying} />
   }
 
-  const showAction = Boolean(result) || !instant
+  const showAction = true
 
   return (
     <div className={showAction ? 'space-y-6 pb-28' : 'space-y-6'}>
@@ -490,7 +489,6 @@ export default function PracticeSession() {
                 question={current}
                 value={value}
                 onChange={setValue}
-                onCommit={instant ? (next) => { handleSubmit(next).catch(() => {}) } : undefined}
                 pending={submitting}
                 result={result}
               />
@@ -525,7 +523,7 @@ export default function PracticeSession() {
               whileTap={{ scale: 0.98 }}
               className="mx-auto flex h-12 w-full max-w-3xl items-center justify-center rounded-full bg-coral-500 px-8 text-base font-semibold text-white shadow-md shadow-coral-100 hover:bg-coral-600 disabled:opacity-60"
             >
-              {submitting ? '提交中…' : '提交答案'}
+              {submitting ? '确认中…' : '确认'}
             </motion.button>
           )}
         </div>

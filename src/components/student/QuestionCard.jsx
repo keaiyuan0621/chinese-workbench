@@ -49,7 +49,7 @@ export default function QuestionCard({ question, value, onChange, onCommit, pend
         submitted={submitted}
       />
       {instant && !submitted && (
-        <p className="text-sm text-ink/50">{pending ? '正在提交…' : '点选后立即提交'}</p>
+        <p className="text-sm text-ink/50">{pending ? '正在确认…' : '选好后点击下方「确认」，再进入下一题'}</p>
       )}
 
       {submitted && <Explanation question={question} result={result} />}
@@ -205,7 +205,7 @@ function Options({ question, value, onChange, onCommit, pending, submitted }) {
                 {opt.key}
               </span>
               <span className="pt-0.5 text-gray-800">{opt.text}</span>
-              {pending && isSel && <span className="ml-auto pt-0.5 text-sm text-ink/60">提交中</span>}
+              {pending && isSel && <span className="ml-auto pt-0.5 text-sm text-ink/60">确认中</span>}
               {submitted && isRight && (
                 <span className="ml-auto pt-0.5 text-sm font-semibold text-emerald-700">
                   {isSel ? '✓ 正确' : '正确答案'}
@@ -256,7 +256,7 @@ function Judge({ question, value, onChange, onCommit, pending, submitted }) {
           >
             <span className="mr-2 text-gray-400">{icon}</span>
             {label}
-            {pending && isSel && <span className="mt-1 block text-sm font-normal text-ink/60">提交中</span>}
+            {pending && isSel && <span className="mt-1 block text-sm font-normal text-ink/60">确认中</span>}
             {submitted && isRight && (
               <span className="mt-1 block text-sm font-semibold text-emerald-700">{isSel ? '✓ 正确' : '正确答案'}</span>
             )}
