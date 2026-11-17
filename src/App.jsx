@@ -18,6 +18,8 @@ import TeacherPapers from './pages/teacher/TeacherPapers.jsx'
 import TeacherQuestions from './pages/teacher/TeacherQuestions.jsx'
 import TeacherReview from './pages/teacher/TeacherReview.jsx'
 import TeacherStaff from './pages/teacher/TeacherStaff.jsx'
+import AiTutorsPreview from './pages/dev/AiTutorsPreview.jsx'
+
 function JuxingFile() {
   useEffect(() => {
     window.location.replace('/juxing.html')
@@ -68,6 +70,7 @@ export default function App() {
       </Route>
 
       <Route path="/juxing" element={<JuxingFile />} />
+      {import.meta.env.DEV && <Route path="/dev/ai-tutors" element={<AiTutorsPreview />} />}
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

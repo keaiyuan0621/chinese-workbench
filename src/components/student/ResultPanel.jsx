@@ -1,10 +1,12 @@
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { formatAnswer, gradeBadge } from '../../lib/practice.js'
+import { formatAnswer, formatStudentAnswer, gradeBadge } from '../../lib/practice.js'
 import { fireFinale } from '../../lib/effects.js'
+import AiTutorPanel from '../ai-tutors/AiTutorPanel.jsx'
+import { isAiTutorsUiEnabled } from '../../lib/aiTutors.js'
 
-export default function ResultPanel({ summary, onRetry, onReview, retrying }) {
+export default function ResultPanel({ summary, answers = {}, onRetry, onReview, retrying }) {
   const { correct, objective, pending, pct, wrong, gradedShort = 0 } = summary
   const badge = gradeBadge(pct)
 
@@ -92,26 +94,40 @@ export default function ResultPanel({ summary, onRetry, onReview, retrying }) {
       {wrong.length > 0 && (
         <section className="space-y-4">
           <h2 className="text-lg font-bold text-gray-800">需要再看看的题目</h2>
-          {wrong.map((q, i) => (
-            <motion.article
-              key={q.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 * i }}
-              className="rounded-student bg-white p-5 shadow-sm ring-1 ring-cream-300 space-y-2"
-            >
-              <div className="flex items-center gap-2 text-xs text-gray-400">
-                <span className="rounded-full bg-gray-100 px-2 py-0.5">{q.type}</span>
-                {q.knowledge_point && <span>{q.knowledge_point.name}</span>}
-              </div>
-              <p className="text-gray-800 whitespace-pre-wrap">{q.stem}</p>
-              <p className="text-sm text-gray-700">
-                <span className="font-semibold">参考答案：</span>
-                {formatAnswer(q)}
-              </p>
-              {q.explanation && <p className="text-sm text-gray-500 whitespace-pre-wrap">{q.explanation}</p>}
-            </motion.article>
-          ))}
+          {wrong.map((q, i) => {
+            const mine = formatStudentAnswer(q, answers[q.id]?.student_answer)
+            return (
+              <motion.article
+                key={q.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 * i }}
+                className="rounded-student bg-white p-5 shadow-sm ring-1 ring-cream-300 space-y-2"
+              >
+                <div className="flex items-center gap-2 text-xs text-gray-400">
+                  <span className="rounded-full bg-gray-100 px-2 py-0.5">{q.type}</span>
+                  {q.knowledge_point && <span>{q.knowledge_point.name}</span>}
+                </div>
+                <p className="text-gray-800 whitespace-pre-wrap">{q.stem}</p>
+                {isAiTutorsUiEnabled() && (
+                  <p className="text-sm text-gray-700">
+                    <span className="font-semibold">我的作答：</span>
+                    {mine || '未作答'}
+                  </p>
+                )}
+                <p className="text-sm text-gray-700">
+                  <span className="font-semibold">参考答案：</span>
+                  {formatAnswer(q)}
+                </p>
+                {q.explanation && <p className="text-sm text-gray-500 whitespace-pre-wrap">{q.explanation}</p>}
+                <AiTutorPanel
+                  question={q}
+                  studentAnswer={mine}
+                  originalExplanation={q.explanation ?? ''}
+                />
+              </motion.article>
+            )
+          })}
         </section>
       )}
     </div>

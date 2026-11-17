@@ -450,7 +450,15 @@ export default function PracticeSession() {
   }
 
   if (finished && summary) {
-    return <ResultPanel summary={summary} onRetry={handleRetry} onReview={openReview} retrying={retrying} />
+    return (
+      <ResultPanel
+        summary={summary}
+        answers={answers}
+        onRetry={handleRetry}
+        onReview={openReview}
+        retrying={retrying}
+      />
+    )
   }
 
   const showAction = true

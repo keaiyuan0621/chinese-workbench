@@ -1,4 +1,5 @@
 import { formatAnswer, formatStudentAnswer } from '../../lib/practice.js'
+import AiTutorPanel from '../ai-tutors/AiTutorPanel.jsx'
 
 function statusOf(row) {
   if (!row) return { label: '未作答', className: 'bg-gray-100 text-gray-500' }
@@ -86,6 +87,11 @@ export default function SessionReview({ questions, answers, onBack, onRetake, re
                   </p>
                 )}
               </div>
+              <AiTutorPanel
+                question={question}
+                studentAnswer={mine}
+                originalExplanation={explanation || ''}
+              />
             </li>
           )
         })}

@@ -1,5 +1,6 @@
 import { DIFFICULTY_LABEL, QUESTION_TYPE_LABEL } from '../../lib/constants.js'
-import { blankPlaceholder, fillStemHint, formatAnswer, isEssay, matchAnswerMap, matchColumns } from '../../lib/practice.js'
+import { blankPlaceholder, fillStemHint, formatAnswer, formatStudentAnswer, isEssay, matchAnswerMap, matchColumns } from '../../lib/practice.js'
+import AiTutorPanel from '../ai-tutors/AiTutorPanel.jsx'
 
 const TYPE_STYLE = {
   单选: 'bg-coral-100 text-coral-600',
@@ -52,7 +53,16 @@ export default function QuestionCard({ question, value, onChange, onCommit, pend
         <p className="text-sm text-ink/50">{pending ? '正在确认…' : '选好后点击下方「确认」，再进入下一题'}</p>
       )}
 
-      {submitted && <Explanation question={question} result={result} />}
+      {submitted && (
+        <>
+          <Explanation question={question} result={result} />
+          <AiTutorPanel
+            question={question}
+            studentAnswer={formatStudentAnswer(question, value)}
+            originalExplanation={question.explanation ?? ''}
+          />
+        </>
+      )}
     </div>
   )
 }
