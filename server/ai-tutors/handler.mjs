@@ -288,6 +288,9 @@ export async function handleTutorRequest(event, options = {}) {
     })
     return json(200, { ok: true, role: payload.role, content })
   } catch (err) {
+    if (['ECONNRESET', 'ECONNREFUSED', 'ENOTFOUND', 'EAI_AGAIN', 'ETIMEDOUT', 'UND_ERR_CONNECT_TIMEOUT'].includes(err?.cause?.code || err?.code)) {
+      return fail(503, 'network', '\u8bb2\u89e3\u670d\u52a1\u6682\u65f6\u65e0\u6cd5\u8fde\u63a5 DeepSeek\uff0c\u8bf7\u68c0\u67e5\u7f51\u7edc\u540e\u91cd\u8bd5')
+    }
     if (err?.code === 'timeout') {
       return fail(504, 'timeout', '讲解超时，请稍后重试')
     }

@@ -250,3 +250,13 @@ test('上游响应体挂起也会超时', async () => {
   assert.equal(result.status, 504)
   assert.equal(result.body.error, 'timeout')
 })
+
+
+test('connection resets return a useful network error', async () => {
+  const result = parse(await call(sample, { fetchImpl: async () => {
+    throw Object.assign(new TypeError('fetch failed'), { cause: { code: 'ECONNRESET' } })
+  } }))
+  assert.equal(result.status, 503)
+  assert.equal(result.body.error, 'network')
+  assert.match(result.body.message, /DeepSeek/)
+})
