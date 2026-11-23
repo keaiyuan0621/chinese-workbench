@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "node --test tests/ai-tutors.test.mjs"
+    "test": "node --test tests/ai-tutors.test.mjs tests/ip-drafts.test.mjs",
+    "export:ip-drafts": "node scripts/export-ip-drafts.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",

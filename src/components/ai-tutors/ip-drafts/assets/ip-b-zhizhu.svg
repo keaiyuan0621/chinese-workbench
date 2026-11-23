@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"  role="img" aria-label="B 知著" focusable="false">
+    <defs><linearGradient id="b-zhizhu-color" x1="40" y1="40" x2="75.41" y2="74.12" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#EFF9FF"/>
+    <stop offset="48%" stop-color="#B2CDD7"/>
+    <stop offset="100%" stop-color="#7CA8C8"/>
+  </linearGradient></defs>
+    <g transform="rotate(10 38 38)">
+    <path d="M 43.2 62.45 A 25 25 0 1 1 62.86 40.61" fill="none" stroke="#2C2C2C" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 41.01 52.18 A 14.5 14.5 0 1 1 52.42 39.52" fill="none" stroke="#2C2C2C" stroke-width="3.2" stroke-linecap="round" opacity="0.72"/>
+    <path d="M 62.86 40.61 Q 61.78 66.34 75.41 74.12" fill="none" stroke="url(#b-zhizhu-color)" stroke-width="6.2" stroke-linecap="round" opacity="0.88"/>
+    <path d="M 62.86 40.61 Q 61.78 66.34 75.41 74.12" fill="none" stroke="#2C2C2C" stroke-width="3.2" stroke-linecap="round" opacity="0.22"/>
+    <path d="M 62.86 40.61 Q 61.78 66.34 75.41 74.12" fill="none" stroke="#2C2C2C" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="3.4 4.2" opacity="0.82"/><g fill="#2C2C2C">
+    <circle cx="33.2" cy="33.4" r="1.9"/>
+    <circle cx="44.8" cy="35.6" r="1.9"/>
+  </g><circle cx="75.41" cy="74.12" r="3.6" fill="#B54434"/></g>
+  </svg>

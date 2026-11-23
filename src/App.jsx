@@ -19,6 +19,7 @@ import TeacherQuestions from './pages/teacher/TeacherQuestions.jsx'
 import TeacherReview from './pages/teacher/TeacherReview.jsx'
 import TeacherStaff from './pages/teacher/TeacherStaff.jsx'
 import AiTutorsPreview from './pages/dev/AiTutorsPreview.jsx'
+import IpDraftReview from './pages/dev/IpDraftReview.jsx'
 
 function JuxingFile() {
   useEffect(() => {
@@ -71,6 +72,7 @@ export default function App() {
 
       <Route path="/juxing" element={<JuxingFile />} />
       {import.meta.env.DEV && <Route path="/dev/ai-tutors" element={<AiTutorsPreview />} />}
+      {import.meta.env.DEV && <Route path="/dev/ip-drafts" element={<IpDraftReview />} />}
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

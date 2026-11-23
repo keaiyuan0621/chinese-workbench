@@ -1,0 +1,116 @@
+.ip-drafts {
+  --ip-ink: var(--color-ink, #2c2c2c);
+  --ip-paper: var(--color-paper, #f8f4ec);
+  --ip-gold: var(--color-gold, #c9b08a);
+  --ip-cinnabar: #b54434;
+  color: var(--ip-ink);
+  background: var(--ip-paper);
+  font-family: var(--font-ui);
+}
+
+.ip-drafts-svg {
+  display: inline-flex;
+  line-height: 0;
+}
+
+.ip-drafts-svg svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ip-drafts-pair {
+  display: inline-flex;
+  align-items: flex-end;
+}
+
+.ip-drafts-pair .ip-drafts-svg:last-child {
+  margin-left: -0.55rem;
+}
+
+.ip-drafts-mark {
+  display: grid;
+  place-items: center;
+  background: var(--ip-paper);
+}
+
+.ip-drafts-mark--32 {
+  width: 32px;
+  height: 32px;
+}
+
+.ip-drafts-mark--96 {
+  width: 96px;
+  height: 96px;
+}
+
+.ip-drafts-mark--256 {
+  width: 256px;
+  height: 256px;
+}
+
+.ip-drafts-mark .ip-drafts-svg,
+.ip-drafts-mark svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.ip-drafts-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 3rem;
+  padding: 0.45rem 0.85rem;
+  border: 0.5px solid var(--ip-gold);
+  border-radius: 0.5rem;
+  background: #fff;
+  text-align: left;
+}
+
+.ip-drafts-chip strong {
+  font-family: var(--font-serif);
+  font-weight: 500;
+}
+
+.ip-drafts-chip span {
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--ip-ink) 58%, transparent);
+}
+
+.ip-drafts table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.ip-drafts th,
+.ip-drafts td {
+  border-bottom: 0.5px solid color-mix(in srgb, var(--ip-gold) 70%, transparent);
+  padding: 0.65rem 0.4rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.ip-drafts th {
+  font-weight: 500;
+  color: color-mix(in srgb, var(--ip-ink) 62%, transparent);
+}
+
+.ip-drafts-sign {
+  min-width: 6rem;
+  height: 2.4rem;
+  border-bottom: 0.5px solid var(--ip-ink);
+}
+
+.ip-drafts-board {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.ip-drafts-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}

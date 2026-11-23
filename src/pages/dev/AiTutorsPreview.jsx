@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import AiTutorPanel from '../../components/ai-tutors/AiTutorPanel.jsx'
 import { formatStudentAnswer } from '../../lib/practice.js'
 
@@ -44,6 +44,11 @@ export default function AiTutorsPreview() {
           <p className="text-sm leading-relaxed text-gray-600">
             这两道是示例题，用来看双角色入口、切换、提问、加载和失败重试。不必登录学生账户。
             生产鉴权不会被绕过；若本机已注入服务端密钥，这里可以打到真实接口，否则会诚实提示未配置。
+          </p>
+          <p className="text-sm">
+            <Link to="/dev/ip-drafts" className="underline decoration-gold underline-offset-4">
+              见微 / 知著三版形象评审
+            </Link>
           </p>
         </header>
 
