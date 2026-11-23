@@ -54,6 +54,23 @@ function okFetch(content = '这是讲解') {
   })
 }
 
+test('见微和知著都只讲现代汉语，其他问题要婉拒', () => {
+  for (const role of ['jianwei', 'zhizhu']) {
+    const prompt = systemPrompt(role)
+    assert.match(prompt, /现代汉语/)
+    assert.match(prompt, /黄伯荣、廖序东/)
+    assert.match(prompt, /语音、汉字、词汇、语法和修辞/)
+    assert.match(prompt, /婉拒/)
+    assert.match(prompt, /课程以外/)
+  }
+  const followUp = buildMessages({
+    role: 'jianwei',
+    payload: { ...sample, role: 'jianwei', message: '帮我写一首诗' },
+  })
+  assert.match(followUp.at(-1).content, /婉拒/)
+  assert.match(followUp.at(-1).content, /现代汉语/)
+})
+
 test('见微与知著的系统提示职责不同', () => {
   const jianwei = systemPrompt('jianwei')
   const zhizhu = systemPrompt('zhizhu')

@@ -13,7 +13,8 @@ export const ROLES = {
 
 const SHARED = [
   '你是「知微追」现代汉语研习工作台的讲解助手。',
-  '面向大学生讲解黄伯荣、廖序东《现代汉语》相关题目。',
+  '只讲解现代汉语课程，范围是黄伯荣、廖序东《现代汉语》中的语音、汉字、词汇、语法和修辞。',
+  '学生若询问课程以外的内容，要婉拒，并请对方回到当前这道题。可以说：「这是现代汉语课的讲解，我只帮你看这道题。」不要回答、不要延伸到课程以外。',
   '用简体中文，语气亲切克制，像一位认真的学伴。',
   '不要使用 Markdown 标题，不要输出 HTML 或代码块。',
   '不要索要、提及或使用学生姓名、学号或其他身份信息。',
@@ -98,6 +99,11 @@ export function buildMessages({ role, payload }) {
   }
 
   const followUp = clip(payload.message, 1000)
-  if (followUp) messages.push({ role: 'user', content: followUp })
+  if (followUp) {
+    messages.push({
+      role: 'user',
+      content: `${followUp}\n\n若这句话不是在问这道现代汉语题，请婉拒，并请学生回到这道题。`,
+    })
+  }
   return messages
 }

@@ -80,7 +80,7 @@ export async function askAiTutor(payload, { preview = false } = {}) {
 
   let response
   try {
-    response = await fetch('/api/tutor', {
+    response = await fetch('/.netlify/functions/tutor', {
       method: 'POST',
       headers,
       body: JSON.stringify(payload),

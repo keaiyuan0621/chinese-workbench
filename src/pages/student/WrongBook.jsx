@@ -1,10 +1,11 @@
 import { motion } from 'framer-motion'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { createPracticeSession, fetchPracticeHistory, fetchWrongBook } from '../../lib/api.js'
+import AiTutorPanel from '../../components/ai-tutors/AiTutorPanel.jsx'
+import { createPracticeSession, fetchPracticeHistory, fetchStudentAnswerDetails, fetchWrongBook } from '../../lib/api.js'
 import { useAuth } from '../../lib/auth-context.js'
 import { zhError } from '../../lib/errors.js'
-import { shuffle } from '../../lib/practice.js'
+import { formatStudentAnswer, shuffle } from '../../lib/practice.js'
 
 const RETRY_LIMIT = 20
 
@@ -30,6 +31,7 @@ export default function WrongBook() {
   const navigate = useNavigate()
   const [sessions, setSessions] = useState(null)
   const [wrongItems, setWrongItems] = useState([])
+  const [answersByQuestion, setAnswersByQuestion] = useState({})
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [retrying, setRetrying] = useState(false)
@@ -37,12 +39,20 @@ export default function WrongBook() {
   const load = useCallback(async () => {
     if (!user) return
     try {
-      const [history, wrongs] = await Promise.all([
+      const [history, wrongs, details] = await Promise.all([
         fetchPracticeHistory(user.id),
         fetchWrongBook(user.id),
+        fetchStudentAnswerDetails(user.id).catch(() => []),
       ])
+      const latestWrong = {}
+      for (const row of details) {
+        if (row.is_correct !== false || !row.question_id) continue
+        const prev = latestWrong[row.question_id]
+        if (!prev || String(row.created_at) > String(prev.created_at)) latestWrong[row.question_id] = row
+      }
       setSessions(history)
-      setWrongItems(wrongs.filter((item) => item.question && !item.mastered))
+      setWrongItems(wrongs.filter((item) => item.question?.stem && !item.mastered))
+      setAnswersByQuestion(latestWrong)
       setError('')
     } catch (err) {
       setSessions([])
@@ -140,6 +150,51 @@ export default function WrongBook() {
         <div className="rounded-student bg-white px-6 py-12 text-center ring-1 ring-gray-100">
           <p className="text-gray-500">还没有练习记录，先去做一套题吧</p>
         </div>
+      )}
+
+      {wrongItems.length > 0 && (
+        <section className="space-y-4">
+          <h2 className="text-sm font-semibold tracking-wide text-ink/60">错题</h2>
+          <ul className="space-y-4">
+            {wrongItems.map((item) => {
+              const question = item.question
+              const row = answersByQuestion[item.question_id]
+              const mine = formatStudentAnswer(question, row?.student_answer)
+              const explanation = question.explanation?.trim() || ''
+              return (
+                <li key={item.id} className="rounded-student bg-white px-4 py-5 sm:px-5">
+                  <div className="flex flex-wrap items-center gap-2 text-sm">
+                    <span className="rounded-full bg-coral-100 px-2.5 py-1 font-medium text-coral-600">答错</span>
+                    {question.type && (
+                      <span className="rounded-full bg-gray-100 px-2.5 py-1 text-gray-500">{question.type}</span>
+                    )}
+                    {item.wrong_count > 1 && (
+                      <span className="text-gray-500">错过 {item.wrong_count} 次</span>
+                    )}
+                  </div>
+                  <p className="mt-3 whitespace-pre-wrap text-base leading-relaxed text-gray-800">{question.stem}</p>
+                  {mine && (
+                    <p className="mt-3 text-sm leading-relaxed text-gray-800">
+                      <span className="font-semibold">我的作答：</span>
+                      {mine}
+                    </p>
+                  )}
+                  {explanation && (
+                    <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
+                      <span className="font-semibold text-gray-800">解析：</span>
+                      {explanation}
+                    </p>
+                  )}
+                  <AiTutorPanel
+                    question={question}
+                    studentAnswer={mine}
+                    originalExplanation={explanation}
+                  />
+                </li>
+              )
+            })}
+          </ul>
+        </section>
       )}
 
       <div className="space-y-6">
