@@ -2,12 +2,13 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { vermillionPoint } from '../src/components/ai-tutors/ip-drafts/geometry.js'
 import { renderIpMarkSvg } from '../src/components/ai-tutors/ip-drafts/markSvg.js'
+import { ACCEPTANCE, PEDAGOGY, VERSION_CLAIMS } from '../src/components/ai-tutors/ip-drafts/reviewCopy.js'
 import { IP_AXIS_DEG, IP_CINNABAR, IP_STROKE_OUTER } from '../src/components/ai-tutors/ip-drafts/tokens.js'
-import { PEDAGOGY } from '../src/components/ai-tutors/ip-drafts/reviewCopy.js'
+import { expectationResult, pairingCorrect, randomPairOrder } from '../src/components/ai-tutors/ip-drafts/trials.js'
 
 test('family rules share axis, stroke and cinnabar logic', () => {
   assert.equal(IP_AXIS_DEG, 42)
-  assert.equal(IP_STROKE_OUTER, 6)
+  assert.equal(IP_STROKE_OUTER, 2.2)
   const jianwei = vermillionPoint('jianwei', 'a')
   const zhizhu = vermillionPoint('zhizhu', 'a')
   assert.equal(jianwei.x, 48)
@@ -41,18 +42,26 @@ test('each version renders a 96 viewBox pair without peach/blue in gray mode', (
 test('jianwei stays closed while zhizhu keeps an open arc', () => {
   const jianwei = renderIpMarkSvg({ version: 'a', role: 'jianwei', uid: 'j' })
   const zhizhu = renderIpMarkSvg({ version: 'a', role: 'zhizhu', uid: 'z' })
-  assert.match(jianwei, /<circle cx="48" cy="48" r="29"/)
-  assert.match(zhizhu, / A 25 25 0 1 1 /)
-  assert.equal(jianwei.includes(' A 25 25 0 1 1 '), false)
+  assert.match(jianwei, /<circle cx="48" cy="48" r="/)
+  assert.match(zhizhu, / A [\d.]+ [\d.]+ 0 1 1 /)
+  assert.equal(/ A [\d.]+ [\d.]+ 0 1 1 /.test(jianwei), false)
 })
 
 test('B keeps A bones and only adds a face above icon size', () => {
   const icon = renderIpMarkSvg({ version: 'b', role: 'jianwei', detail: 'icon', uid: 'b-icon' })
   const avatar = renderIpMarkSvg({ version: 'b', role: 'jianwei', detail: 'avatar', uid: 'b-avatar' })
-  assert.equal(icon.includes('rotate(-8 48 48)'), false)
-  assert.equal(icon.includes('cx="41.4"'), false)
-  assert.equal(avatar.includes('rotate(-8 48 48)'), true)
-  assert.equal(avatar.includes('cx="41.4"'), true)
+  assert.equal(icon.includes('ip-face'), false)
+  assert.equal(icon.includes('rotate('), false)
+  assert.equal(avatar.includes('ip-face'), true)
+  assert.equal(avatar.includes('rotate(-7 48 48)'), true)
+  assert.equal(avatar.includes('ip-seal'), false)
+})
+
+test('C uses a seal frame while A does not', () => {
+  const a = renderIpMarkSvg({ version: 'a', role: 'jianwei', uid: 'a-seal' })
+  const c = renderIpMarkSvg({ version: 'c', role: 'jianwei', uid: 'c-seal' })
+  assert.equal(a.includes('ip-seal'), false)
+  assert.equal(c.includes('ip-seal'), true)
 })
 
 test('pedagogy samples include an open prompt where zhizhu withholds the answer', () => {
@@ -62,4 +71,22 @@ test('pedagogy samples include an open prompt where zhizhu withholds the answer'
   assert.match(open.zhizhu, /不要写「这句话很好」|想到哪一步/)
   assert.equal(open.zhizhu.includes('标准答案'), false)
   assert.equal(open.zhizhu.includes('参考范文'), false)
+})
+
+test('acceptance protocol names testers, 3-second hide, and anti-example', () => {
+  assert.match(ACCEPTANCE.testers, /未参与设计/)
+  assert.match(ACCEPTANCE.timing, /展示 3 秒后立即撤图/)
+  assert.match(ACCEPTANCE.order, /左右随机/)
+  assert.match(ACCEPTANCE.anti, /直接给答案/)
+  assert.ok(VERSION_CLAIMS.a.jianwei)
+  assert.ok(VERSION_CLAIMS.c.zhizhu)
+})
+
+test('pairing and anti-example helpers record evidence without judging a winner', () => {
+  assert.equal(pairingCorrect(['jianwei', 'zhizhu'], 'left'), true)
+  assert.equal(pairingCorrect(['zhizhu', 'jianwei'], 'left'), false)
+  assert.deepEqual(randomPairOrder(() => 0.1), ['jianwei', 'zhizhu'])
+  assert.deepEqual(randomPairOrder(() => 0.9), ['zhizhu', 'jianwei'])
+  assert.equal(expectationResult('answer').anti, true)
+  assert.equal(expectationResult('hint').anti, false)
 })

@@ -114,3 +114,46 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
 }
+
+.ip-drafts-pill,
+.ip-drafts-action {
+  border-radius: 999px;
+  border: 0.5px solid var(--ip-gold);
+  background: #fff;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+.ip-drafts-pill.is-on,
+.ip-drafts-action:hover {
+  background: color-mix(in srgb, #fff 70%, var(--ip-gold));
+}
+
+.ip-drafts-action {
+  background: var(--ip-ink);
+  color: var(--ip-paper);
+  border-color: var(--ip-ink);
+}
+
+.ip-drafts-action:hover {
+  background: color-mix(in srgb, var(--ip-ink) 86%, #fff);
+}
+
+.ip-drafts-stage {
+  display: flex;
+  min-height: 7rem;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2.5rem;
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, #fff 70%, var(--ip-paper));
+  padding: 1rem;
+}
+
+.ip-drafts-stage--32 {
+  min-height: 5.5rem;
+}
+
+.ip-drafts-stage--96 {
+  min-height: 10rem;
+}

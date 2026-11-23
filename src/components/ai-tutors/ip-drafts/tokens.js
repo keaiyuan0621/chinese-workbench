@@ -10,11 +10,15 @@ export const IP_MOUNTAIN = ['#EFF9FF', '#B2CDD7', '#7CA8C8']
 export const IP_AXIS_DEG = 42
 export const IP_VIEWBOX = 96
 
-/** 细墨线：约 1.5px @ 24px（viewBox 96）。三版同一粗细，才能横比。 */
-export const IP_STROKE_OUTER = 6
-export const IP_STROKE_INNER = 3.2
-export const IP_STROKE_FLY = 2.6
-export const IP_CINNABAR_R = 3.6
+/**
+ * 细墨线与 Logo 同比例：Logo 外圈 1.15 @ viewBox 64。
+ * 2.2 / 96 ≈ 1.15 / 64。剪影模式另加粗，专供 32px 辨识测试。
+ */
+export const IP_STROKE_OUTER = 2.2
+export const IP_STROKE_INNER = 1.35
+export const IP_STROKE_FLY = 1.15
+export const IP_CINNABAR_R = 2.2
+export const IP_SILHOUETTE_STROKE = 7
 
 export const IP_VERSIONS = [
   {

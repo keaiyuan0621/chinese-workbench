@@ -4,9 +4,10 @@
       <stop offset="55%" stop-color="#F4D0D7"/>
       <stop offset="100%" stop-color="#E9A2BB"/>
     </radialGradient></defs>
-    <g><circle cx="48" cy="48" r="19.5" fill="url(#a-jianwei-color)" opacity="0.92"/>
-    <circle cx="48" cy="48" r="29" fill="none" stroke="#2C2C2C" stroke-width="6"/>
-    <circle cx="48" cy="48" r="19.5" fill="none" stroke="#2C2C2C" stroke-width="3.2" opacity="0.78"/>
-    <circle cx="48" cy="48" r="10.5" fill="none" stroke="#2C2C2C" stroke-width="2.4" stroke-dasharray="3.4 4.2" opacity="0.55"/>
-    <path d="M 71.07 54.62 A 24 24 0 0 1 56.99 70.25" fill="none" stroke="#2C2C2C" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="3.4 4.2" opacity="0.82"/><circle cx="48" cy="48" r="3.6" fill="#B54434"/></g>
+    <g>
+    <circle cx="48" cy="48" r="14" fill="url(#a-jianwei-color)" opacity="0.92"/>
+    <circle cx="48" cy="48" r="28" fill="none" stroke="#2C2C2C" stroke-width="2.2"/>
+    <circle cx="48" cy="48" r="18" fill="none" stroke="#2C2C2C" stroke-width="1.35" opacity="0.78"/>
+    <circle cx="48" cy="48" r="9.5" fill="none" stroke="#2C2C2C" stroke-width="1.05" stroke-dasharray="2.2 3.2" opacity="0.55"/>
+    <path d="M 64.35 62.72 L 56.92 56.03" fill="none" stroke="#2C2C2C" stroke-width="1.15" stroke-linecap="round" stroke-dasharray="2.2 3.2" opacity="0.82"/><circle cx="48" cy="48" r="2.2" fill="#B54434"/></g>
   </svg>

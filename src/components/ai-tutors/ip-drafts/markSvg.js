@@ -1,10 +1,12 @@
-import { jianweiGatherArc, vermillionPoint, zhizhuFly, zhizhuOpenArc } from './geometry.js'
+import { jianweiInwardFly, sealRect, vermillionPoint, zhizhuFly, zhizhuOpenArc, zhizhuOrigin } from './geometry.js'
 import {
   IP_CINNABAR,
   IP_CINNABAR_R,
   IP_INK,
   IP_MOUNTAIN,
+  IP_PAPER,
   IP_PEACH,
+  IP_SILHOUETTE_STROKE,
   IP_STROKE_FLY,
   IP_STROKE_INNER,
   IP_STROKE_OUTER,
@@ -17,66 +19,92 @@ function palette(mode, role) {
 }
 
 function flyingWhite(d, width = IP_STROKE_FLY) {
-  return `<path d="${d}" fill="none" stroke="${IP_INK}" stroke-width="${width}" stroke-linecap="round" stroke-dasharray="3.4 4.2" opacity="0.82"/>`
+  return `<path d="${d}" fill="none" stroke="${IP_INK}" stroke-width="${width}" stroke-linecap="round" stroke-dasharray="2.2 3.2" opacity="0.82"/>`
 }
 
-function inkTrail(d, width = 4.2, opacity = 0.22) {
+function inkTrail(d, width = 2.4, opacity = 0.22) {
   return `<path d="${d}" fill="none" stroke="${IP_INK}" stroke-width="${width}" stroke-linecap="round" opacity="${opacity}"/>`
 }
 
 function jianweiBody({ version, mode, colors, gradientId }) {
   const seal = version === 'c'
-  const outer = seal ? 32 : 29
-  const mid = seal ? 21 : 19.5
-  const inner = seal ? 11.5 : 10.5
-  const fillR = seal ? 10 : mid
+  const outer = seal ? 30 : 28
+  const mid = seal ? 20 : 18
+  const inner = seal ? 11 : 9.5
+  const fillR = seal ? 8 : 14
   const wash = colors.gradient ? `url(#${gradientId})` : colors.wash
-  const fill =
-    mode === 'silhouette'
-      ? `<circle cx="48" cy="48" r="${outer}" fill="${IP_INK}"/>`
-      : `<circle cx="48" cy="48" r="${fillR}" fill="${wash}" opacity="${seal ? 0.55 : 0.92}"/>`
+  const fly = jianweiInwardFly(version)
+  const inward = `M ${fly.start.x} ${fly.start.y} L ${fly.end.x} ${fly.end.y}`
+
+  if (mode === 'silhouette') {
+    const stamp = sealRect()
+    const shape = seal
+      ? `<rect class="ip-seal" x="${stamp.x}" y="${stamp.y}" width="${stamp.size}" height="${stamp.size}" rx="${stamp.rx}" fill="${IP_INK}"/>`
+      : `<circle cx="48" cy="48" r="${outer}" fill="${IP_INK}"/>`
+    return `${shape}`
+  }
+
+  const frame = seal
+    ? `<rect class="ip-seal" x="8" y="8" width="80" height="80" rx="9" fill="none" stroke="${IP_INK}" stroke-width="${IP_STROKE_OUTER}"/>`
+    : ''
   const innerRing = seal
-    ? ''
-    : `<circle cx="48" cy="48" r="${inner}" fill="none" stroke="${IP_INK}" stroke-width="2.4" stroke-dasharray="3.4 4.2" opacity="0.55"/>`
-  const gather = flyingWhite(jianweiGatherArc(version), seal ? 3 : 2.4)
-  return `${fill}
+    ? `<circle cx="48" cy="48" r="${inner}" fill="none" stroke="${IP_INK}" stroke-width="${IP_STROKE_INNER}" opacity="0.55"/>`
+    : `<circle cx="48" cy="48" r="${inner}" fill="none" stroke="${IP_INK}" stroke-width="1.05" stroke-dasharray="2.2 3.2" opacity="0.55"/>`
+
+  return `${frame}
+    <circle cx="48" cy="48" r="${fillR}" fill="${wash}" opacity="${seal ? 0.5 : 0.92}"/>
     <circle cx="48" cy="48" r="${outer}" fill="none" stroke="${IP_INK}" stroke-width="${IP_STROKE_OUTER}"/>
     <circle cx="48" cy="48" r="${mid}" fill="none" stroke="${IP_INK}" stroke-width="${IP_STROKE_INNER}" opacity="0.78"/>
     ${innerRing}
-    ${gather}`
+    ${flyingWhite(inward, seal ? 1.35 : IP_STROKE_FLY)}`
 }
 
 function zhizhuBody({ version, mode, colors, gradientId }) {
   const fly = zhizhuFly(version)
   const seal = version === 'c'
-  const outerR = seal ? 28 : 25
-  const innerR = seal ? 16 : 14.5
+  const outerR = seal ? 28 : 26
+  const innerR = seal ? 16 : 15
   const ribbon = `M ${fly.start.x} ${fly.start.y} Q ${fly.mid.x} ${fly.mid.y} ${fly.end.x} ${fly.end.y}`
   const wash = colors.gradient ? `url(#${gradientId})` : colors.wash
-  const silhouette = mode === 'silhouette'
-    ? `<path d="${ribbon}" fill="none" stroke="${IP_INK}" stroke-width="${IP_STROKE_OUTER}" stroke-linecap="round"/>`
-    : `<path d="${ribbon}" fill="none" stroke="${wash}" stroke-width="${seal ? 5.4 : 6.2}" stroke-linecap="round" opacity="0.88"/>`
+  const frame = seal && mode !== 'silhouette'
+    ? `<rect class="ip-seal" x="8" y="8" width="80" height="80" rx="9" fill="none" stroke="${IP_INK}" stroke-width="${IP_STROKE_OUTER}" opacity="0.92"/>`
+    : ''
+
+  if (mode === 'silhouette') {
+    const stamp = seal
+      ? `<rect class="ip-seal" x="8" y="8" width="80" height="80" rx="9" fill="none" stroke="${IP_INK}" stroke-width="4"/>`
+      : ''
+    return `${stamp}
+    <path d="${zhizhuOpenArc(outerR, version)}" fill="none" stroke="${IP_INK}" stroke-width="${IP_SILHOUETTE_STROKE}" stroke-linecap="round"/>
+    <path d="${ribbon}" fill="none" stroke="${IP_INK}" stroke-width="${IP_SILHOUETTE_STROKE}" stroke-linecap="round"/>`
+  }
+
   return `
+    ${frame}
     <path d="${zhizhuOpenArc(outerR, version)}" fill="none" stroke="${IP_INK}" stroke-width="${IP_STROKE_OUTER}" stroke-linecap="round"/>
     <path d="${zhizhuOpenArc(innerR, version)}" fill="none" stroke="${IP_INK}" stroke-width="${IP_STROKE_INNER}" stroke-linecap="round" opacity="0.72"/>
-    ${silhouette}
-    ${inkTrail(ribbon, seal ? 3.6 : 3.2, 0.22)}
-    ${flyingWhite(ribbon, seal ? 2.8 : IP_STROKE_FLY)}`
+    <path d="${ribbon}" fill="none" stroke="${wash}" stroke-width="${seal ? 3.4 : 3.8}" stroke-linecap="round" opacity="0.88"/>
+    ${inkTrail(ribbon, seal ? 2.2 : 2.4, 0.22)}
+    ${flyingWhite(ribbon)}`
 }
 
-function jianweiFace() {
-  return `<g fill="${IP_INK}">
-    <circle cx="41.4" cy="41.2" r="1.9"/>
-    <circle cx="54.6" cy="41.2" r="1.9"/>
-    <path d="M40.2 37.6q1.4 1.2 3.4 0.2" fill="none" stroke="${IP_INK}" stroke-width="1.5" stroke-linecap="round"/>
-    <path d="M55.8 37.6q-1.4 1.2 -3.4 0.2" fill="none" stroke="${IP_INK}" stroke-width="1.5" stroke-linecap="round"/>
+function jianweiFace(mode) {
+  const halo =
+    mode === 'color' || mode === 'gray'
+      ? `<circle cx="48" cy="48" r="5.4" fill="${IP_PAPER}"/>`
+      : ''
+  return `${halo}<g class="ip-face" fill="${IP_INK}">
+    <circle cx="41" cy="36" r="1.55"/>
+    <circle cx="55" cy="36" r="1.55"/>
+    <path d="M39.4 32.8q1.8 1.1 3.6 0.15" fill="none" stroke="${IP_INK}" stroke-width="1.15" stroke-linecap="round"/>
+    <path d="M56.6 32.8q-1.8 1.1 -3.6 0.15" fill="none" stroke="${IP_INK}" stroke-width="1.15" stroke-linecap="round"/>
   </g>`
 }
 
 function zhizhuFace() {
-  return `<g fill="${IP_INK}">
-    <circle cx="33.2" cy="33.4" r="1.9"/>
-    <circle cx="44.8" cy="35.6" r="1.9"/>
+  return `<g class="ip-face" fill="${IP_INK}">
+    <circle cx="33" cy="32.5" r="1.55"/>
+    <circle cx="43.5" cy="35.5" r="1.55"/>
   </g>`
 }
 
@@ -109,15 +137,18 @@ export function renderIpMarkSvg({
   const colors = palette(mode, role)
   const boneVersion = version === 'b' ? 'a' : version
   const vermillion = vermillionPoint(role, version)
-  const showFace = version === 'b' && detail !== 'icon'
+  const showFace = version === 'b' && detail !== 'icon' && mode !== 'silhouette'
   const label = labeled ? `${version.toUpperCase()} ${role === 'zhizhu' ? '知著' : '见微'}` : ''
+  const cinR = version === 'c' ? 2.6 : IP_CINNABAR_R
   const wrap = (transform, inner) =>
     transform ? `<g transform="${transform}">${inner}</g>` : `<g>${inner}</g>`
-  const dot = `<circle cx="${vermillion.x}" cy="${vermillion.y}" r="${version === 'c' ? 4.1 : IP_CINNABAR_R}" fill="${IP_CINNABAR}"/>`
+  const dot = `<circle cx="${vermillion.x}" cy="${vermillion.y}" r="${cinR}" fill="${IP_CINNABAR}"/>`
+  const jianweiTilt = showFace ? 'rotate(-7 48 48)' : ''
+  const zhizhuTilt = showFace ? `rotate(8 ${zhizhuOrigin('a').x} ${zhizhuOrigin('a').y})` : ''
   const body =
     role === 'zhizhu'
       ? wrap(
-          showFace ? 'rotate(10 38 38)' : '',
+          zhizhuTilt,
           `${zhizhuBody({
             version: boneVersion,
             mode,
@@ -126,13 +157,13 @@ export function renderIpMarkSvg({
           })}${showFace ? zhizhuFace() : ''}${dot}`,
         )
       : wrap(
-          showFace ? 'rotate(-8 48 48)' : '',
+          jianweiTilt,
           `${jianweiBody({
             version: boneVersion,
             mode,
             colors,
             gradientId: uid,
-          })}${showFace ? jianweiFace() : ''}${dot}`,
+          })}${showFace ? jianweiFace(mode) : ''}${dot}`,
         )
   const sizeAttrs = [width ? `width="${width}"` : '', height ? `height="${height}"` : '']
     .filter(Boolean)

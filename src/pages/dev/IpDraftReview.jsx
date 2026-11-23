@@ -3,6 +3,7 @@ import { Link, Navigate } from 'react-router-dom'
 import InkSeal from '../../components/student/InkSeal.jsx'
 import { AiTutorMascotPair } from '../../components/ai-tutors/AiTutorMascot.jsx'
 import IpMark, { IpPair } from '../../components/ai-tutors/ip-drafts/IpMark.jsx'
+import { ExpectationTrial, RecognitionTrial } from '../../components/ai-tutors/ip-drafts/ReviewTrials.jsx'
 import {
   ACCEPTANCE,
   C_VS_EXISTING,
@@ -12,6 +13,7 @@ import {
   REPLACE_SCOPE,
   REVIEW_ROWS,
   ROLLBACK,
+  VERSION_CLAIMS,
 } from '../../components/ai-tutors/ip-drafts/reviewCopy.js'
 import { IP_ROLES, IP_VERSIONS } from '../../components/ai-tutors/ip-drafts/tokens.js'
 import '../../components/ai-tutors/ip-drafts/ip-drafts.css'
@@ -25,36 +27,52 @@ function Frame({ size, children, caption }) {
   )
 }
 
-function EntryMock({ version, hideNames }) {
+function QuestionCard({ version, hideNames }) {
+  const sample = PEDAGOGY[0]
   const jianwei = hideNames ? '角色甲' : IP_ROLES.jianwei.name
   const zhizhu = hideNames ? '角色乙' : IP_ROLES.zhizhu.name
   return (
-    <div className="grid gap-2 sm:grid-cols-2">
-      <div className="ip-drafts-chip">
-        <IpMark version={version} role="jianwei" detail="avatar" className="h-11 w-11" />
-        <div>
-          <strong>{hideNames ? '入口一' : IP_ROLES.jianwei.entry}</strong>
-          <span>{jianwei}：{IP_ROLES.jianwei.motion}</span>
+    <article className="rounded-lg bg-white px-4 py-4">
+      <p className="text-xs tracking-[0.16em] text-ink/45">
+        {sample.course} · {sample.type}
+      </p>
+      <p className="mt-2 text-base">{sample.stem}</p>
+      <ul className="mt-2 space-y-1 text-sm text-ink/70">
+        {sample.options.map((option) => (
+          <li key={option}>{option}</li>
+        ))}
+      </ul>
+      <p className="mt-2 text-sm">学生作答：{sample.mine}</p>
+      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        <div className="ip-drafts-chip">
+          <IpMark version={version} role="jianwei" detail="avatar" className="h-11 w-11" />
+          <div>
+            <strong>{hideNames ? '入口一' : IP_ROLES.jianwei.entry}</strong>
+            <span>{jianwei}：{IP_ROLES.jianwei.motion}</span>
+          </div>
+        </div>
+        <div className="ip-drafts-chip">
+          <IpMark version={version} role="zhizhu" detail="avatar" className="h-11 w-11" />
+          <div>
+            <strong>{hideNames ? '入口二' : IP_ROLES.zhizhu.entry}</strong>
+            <span>{zhizhu}：{IP_ROLES.zhizhu.motion}</span>
+          </div>
         </div>
       </div>
-      <div className="ip-drafts-chip">
-        <IpMark version={version} role="zhizhu" detail="avatar" className="h-11 w-11" />
-        <div>
-          <strong>{hideNames ? '入口二' : IP_ROLES.zhizhu.entry}</strong>
-          <span>{zhizhu}：{IP_ROLES.zhizhu.motion}</span>
-        </div>
-      </div>
-    </div>
+    </article>
   )
 }
 
 function VersionBoard({ version, hideNames }) {
   const meta = IP_VERSIONS.find((item) => item.id === version)
+  const claim = VERSION_CLAIMS[version]
   return (
     <article className="space-y-6 rounded-lg border-[0.5px] border-gold bg-white/70 p-4 sm:p-5">
       <header className="space-y-1">
         <h3 className="font-serif text-xl">{hideNames ? `方案 ${version.toUpperCase()}` : meta.name}</h3>
         <p className="text-sm text-ink/60">{meta.focus}</p>
+        <p className="text-sm text-ink/70">见微：{claim.jianwei}</p>
+        <p className="text-sm text-ink/70">知著：{claim.zhizhu}</p>
       </header>
 
       <div className="flex flex-wrap items-end justify-center gap-8 py-2">
@@ -113,8 +131,8 @@ function VersionBoard({ version, hideNames }) {
       </div>
 
       <div>
-        <p className="mb-2 text-xs tracking-[0.16em] text-ink/45">错题回看入口（职责写在文案上）</p>
-        <EntryMock version={version} hideNames={hideNames} />
+        <p className="mb-2 text-xs tracking-[0.16em] text-ink/45">同一道语文题上的入口</p>
+        <QuestionCard version={version} hideNames={hideNames} />
       </div>
     </article>
   )
@@ -172,7 +190,10 @@ export default function IpDraftReview() {
         <section className="space-y-3">
           <h2 className="font-serif text-2xl">量化验收口径</h2>
           <ul className="list-disc space-y-1 pl-5 text-sm leading-relaxed text-ink/75">
-            <li>{ACCEPTANCE.gray32}</li>
+            <li>{ACCEPTANCE.testers}</li>
+            <li>{ACCEPTANCE.timing}</li>
+            <li>{ACCEPTANCE.order}</li>
+            <li>{ACCEPTANCE.sil32}</li>
             <li>{ACCEPTANCE.color96}</li>
             <li>{ACCEPTANCE.family}</li>
             <li>{ACCEPTANCE.anti}</li>
@@ -196,6 +217,29 @@ export default function IpDraftReview() {
               <VersionBoard key={item.id} version={item.id} hideNames={hideNames} />
             ))}
           </div>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="font-serif text-2xl">同一错题 · 三版入口</h2>
+          <p className="text-sm text-ink/60">
+            交互把三版放进同一道语文题。文案固定为「让见微拆开讲」「跟知著想一想」。
+          </p>
+          <div className="grid gap-4 lg:grid-cols-3">
+            {IP_VERSIONS.map((item) => (
+              <div key={item.id} className="space-y-2">
+                <p className="text-xs tracking-[0.16em] text-ink/45">
+                  {hideNames ? `方案 ${item.id.toUpperCase()}` : item.name}
+                </p>
+                <QuestionCard version={item.id} hideNames={hideNames} />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="font-serif text-2xl">试次记录</h2>
+          <RecognitionTrial />
+          <ExpectationTrial />
         </section>
 
         <section className="space-y-3">
