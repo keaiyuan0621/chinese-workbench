@@ -46,10 +46,10 @@ export const ACCEPTANCE = {
   testers: '10 名互不重叠、未参与设计的受测者；每人每项只测一组。',
   timing: '展示 3 秒后立即撤图再作答，禁止边看边答。系统减少动效时改为手动撤图。',
   order: '左右随机并记录位序。同一人测多版时必须换左右。',
-  sil32: '32px 纯单色剪影只保留轮廓 + 朱砂点，正确配对 ≥8/10。',
+  sil32: '32px 纯单色剪影只保留轮廓 + 朱砂点，正确配对 ≥8/10。另交极限墨色稿：朱砂也改用同一墨色，无任何色阶。',
   color96: '96px 彩色正确配对 ≥9/10。',
   family: '三条硬指标：同细墨线比例、同同心圆母体、朱砂同一相对规则（只点不铺面）。',
-  anti: '看「跟知著想一想」，若预期「直接给答案」则该版入口未通过。',
+  anti: '看「跟知著想一想」，若预期「直接给答案」则该版入口未通过。记录误判来自文案还是造型。',
 }
 
 export const PEDAGOGY = [
@@ -64,6 +64,9 @@ export const PEDAGOGY = [
       'D. 音位没有辨义作用',
     ],
     mine: 'C',
+    answer: 'B',
+    explanation:
+      '音位是音系学概念，从具体音素中归纳而来，作用是区别意义。音素是语音的最小单位；音位是能区别意义的最小语音单位。',
     jianwei:
       '你选 C，是把「音素」和「音位」叠成了一个词。音素是听得见的最小语音片段；音位是从这些片段里归纳出来、专门用来区别意义的单位。本题考点是「辨义」。A 把音位说成具体语音，D 直接否定辨义，都偏了。',
     zhizhu:
@@ -75,6 +78,8 @@ export const PEDAGOGY = [
     stem: '等差数列 {an} 中，a1 = 3，公差 d = 2，则 a10 = ____。',
     options: [],
     mine: '23',
+    answer: '21',
+    explanation: '等差数列通项 a_n = a1 + (n−1)d。从第 1 项到第 10 项，公差加 9 次。',
     jianwei:
       '你大概用成了 a1 + n·d，所以 3 + 10×2 = 23。通项是 a_n = a1 + (n−1)d：从第 1 项到第 10 项，公差只加了 9 次。代入得 3 + 9×2 = 21。错因是把「项数」当成了「相加次数」。',
     zhizhu:
@@ -86,6 +91,8 @@ export const PEDAGOGY = [
     stem: '结合上下文，简要说明「见微知著」在文中的作用。',
     options: [],
     mine: '这句话很好，说明作者观察细致。',
+    answer: '由学生自行完成，本题无唯一成品',
+    explanation: '赏析需落到文本中的「微」与「著」，并说明二者如何衔接。空评不算作答。',
     jianwei:
       '「很好」「细致」还停在评价，没有落到文本。先圈出文中写「微」的那一处具体物象，再标出它通向的「著」（结构、主旨或后文事件）。作用通常落在：以小见大、提示读法、或为后文收束埋伏笔。把这三步写全，就不是空评。',
     zhizhu:
@@ -120,5 +127,14 @@ export const REVIEW_ROWS = [
 export const ROLLBACK = [
   '本轮不替换产品默认头像，关闭评审页不影响现网。',
   '若将来接入：VITE_AI_TUTORS_ENABLED=false 可关闭整个 AI 讲解入口。',
-  '形象回滚：恢复 src/components/ai-tutors/AiTutorMascot.jsx，或回到分支 codex/baseline-before-ip-drafts-20261123。',
+  '形象回滚：恢复 src/components/ai-tutors/AiTutorMascot.jsx。',
+  '本轮出稿前回滚：git switch --detach af0b633，或分支 codex/baseline-before-ip-review-20261123。',
+  '去掉全部 IP 出稿：分支 codex/baseline-before-ip-drafts-20261123。',
+]
+
+export const LEDGER_KEY = 'zhiweizhui-ip-draft-review-ledger'
+export const LEDGER_CHOICES = [
+  { id: '', label: '待签' },
+  { id: 'pass', label: '通过' },
+  { id: 'fail', label: '未过' },
 ]

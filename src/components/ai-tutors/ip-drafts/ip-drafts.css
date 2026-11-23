@@ -157,3 +157,81 @@
 .ip-drafts-stage--96 {
   min-height: 10rem;
 }
+
+.ip-drafts-entries {
+  display: grid;
+  gap: 0.65rem;
+}
+
+@media (min-width: 640px) {
+  .ip-drafts-entries {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.ip-drafts-entry {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 3.4rem;
+  border: 0.5px solid var(--ip-gold);
+  border-radius: 0.5rem;
+  background: #fff;
+  padding: 0.55rem 0.85rem;
+  text-align: left;
+}
+
+.ip-drafts-entry strong {
+  display: block;
+  font-family: var(--font-serif);
+  font-weight: 500;
+}
+
+.ip-drafts-entry em {
+  display: block;
+  font-style: normal;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--ip-ink) 58%, transparent);
+}
+
+.ip-drafts-entry--jianwei.is-on {
+  background: color-mix(in srgb, #f4d0d7 42%, #fff);
+}
+
+.ip-drafts-entry--zhizhu.is-on {
+  background: color-mix(in srgb, #b2cdd7 42%, #fff);
+}
+
+.ip-drafts-reply {
+  margin-top: 0.85rem;
+  border-radius: 0.5rem;
+  padding: 0.85rem 1rem;
+  background: color-mix(in srgb, #fff 70%, var(--ip-paper));
+}
+
+.ip-drafts-reply--jianwei {
+  background: color-mix(in srgb, #f4d0d7 28%, #fff);
+}
+
+.ip-drafts-reply--zhizhu {
+  background: color-mix(in srgb, #b2cdd7 28%, #fff);
+}
+
+.ip-drafts select,
+.ip-drafts input[type='text'],
+.ip-drafts-sign-input,
+.ip-drafts td input {
+  width: 100%;
+  min-width: 5.5rem;
+  border: 0;
+  border-bottom: 0.5px solid var(--ip-ink);
+  background: transparent;
+  padding: 0.25rem 0;
+  color: inherit;
+}
+
+.ip-drafts-sign-input {
+  width: calc(100% - 4.5rem);
+}

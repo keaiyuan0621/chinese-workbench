@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"  role="img" aria-label="C 知著" focusable="false">
     
     <g>
-    <rect class="ip-seal" x="8" y="8" width="80" height="80" rx="9" fill="none" stroke="#2C2C2C" stroke-width="2.2" opacity="0.92"/>
+    <path class="ip-seal" d="M 17 8 H 79 A 9 9 0 0 1 88 17 V 64 M 68 88 H 17 A 9 9 0 0 1 8 79 V 17 A 9 9 0 0 1 17 8" fill="none" stroke="#2C2C2C" stroke-width="2.2" opacity="0.92"/>
     <path d="M 40 66 A 28 28 0 1 1 67.98 38.98" fill="none" stroke="#2C2C2C" stroke-width="2.2" stroke-linecap="round"/>
     <path d="M 40 54 A 16 16 0 1 1 55.99 38.56" fill="none" stroke="#2C2C2C" stroke-width="1.35" stroke-linecap="round" opacity="0.72"/>
-    <path d="M 62.29 58.07 Q 68.87 71.21 81.62 75.47" fill="none" stroke="#C2C2C2" stroke-width="3.4" stroke-linecap="round" opacity="0.88"/>
-    <path d="M 62.29 58.07 Q 68.87 71.21 81.62 75.47" fill="none" stroke="#2C2C2C" stroke-width="2.2" stroke-linecap="round" opacity="0.22"/>
-    <path d="M 62.29 58.07 Q 68.87 71.21 81.62 75.47" fill="none" stroke="#2C2C2C" stroke-width="1.15" stroke-linecap="round" stroke-dasharray="2.2 3.2" opacity="0.82"/><circle cx="81.62" cy="75.47" r="2.6" fill="#B54434"/></g>
+    <path d="M 62.29 58.07 Q 68.87 71.21 90.53 83.5" fill="none" stroke="#C2C2C2" stroke-width="3.4" stroke-linecap="round" opacity="0.88"/>
+    <path d="M 62.29 58.07 Q 68.87 71.21 90.53 83.5" fill="none" stroke="#2C2C2C" stroke-width="2.2" stroke-linecap="round" opacity="0.22"/>
+    <path d="M 62.29 58.07 Q 68.87 71.21 90.53 83.5" fill="none" stroke="#2C2C2C" stroke-width="1.15" stroke-linecap="round" stroke-dasharray="2.2 3.2" opacity="0.82"/><circle cx="90.53" cy="83.5" r="2.6" fill="#B54434"/></g>
   </svg>

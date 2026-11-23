@@ -26,7 +26,7 @@ export function zhizhuOrigin(version = 'a') {
 export function vermillionPoint(role, version = 'a') {
   if (role === 'jianwei') return { x: 48, y: 48 }
   const origin = zhizhuOrigin(version)
-  const reach = version === 'c' ? 56 : 50
+  const reach = version === 'c' ? 68 : 50
   return polar(origin.x, origin.y, reach, IP_AXIS_DEG)
 }
 
@@ -62,4 +62,17 @@ export function zhizhuOpenArc(radius, version = 'a') {
 
 export function sealRect() {
   return { x: 8, y: 8, size: 80, rx: 9 }
+}
+
+/** 方印墨线。open 时在右下留缺口，让飞白破边。 */
+export function sealFramePath(open = false) {
+  const { x, y, size, rx } = sealRect()
+  const right = x + size
+  const bottom = y + size
+  const start = `M ${x + rx} ${y} H ${right - rx} A ${rx} ${rx} 0 0 1 ${right} ${y + rx}`
+  const west = `H ${x + rx} A ${rx} ${rx} 0 0 1 ${x} ${bottom - rx} V ${y + rx} A ${rx} ${rx} 0 0 1 ${x + rx} ${y}`
+  if (!open) {
+    return `${start} V ${bottom - rx} A ${rx} ${rx} 0 0 1 ${right - rx} ${bottom} ${west} Z`
+  }
+  return `${start} V 64 M 68 ${bottom} ${west}`
 }

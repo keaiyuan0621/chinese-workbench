@@ -1,4 +1,12 @@
-import { jianweiInwardFly, sealRect, vermillionPoint, zhizhuFly, zhizhuOpenArc, zhizhuOrigin } from './geometry.js'
+import {
+  jianweiInwardFly,
+  sealFramePath,
+  sealRect,
+  vermillionPoint,
+  zhizhuFly,
+  zhizhuOpenArc,
+  zhizhuOrigin,
+} from './geometry.js'
 import {
   IP_CINNABAR,
   IP_CINNABAR_R,
@@ -12,8 +20,12 @@ import {
   IP_STROKE_OUTER,
 } from './tokens.js'
 
+function isCutout(mode) {
+  return mode === 'silhouette' || mode === 'ink'
+}
+
 function palette(mode, role) {
-  if (mode === 'silhouette') return { wash: IP_INK, gradient: false }
+  if (isCutout(mode)) return { wash: IP_INK, gradient: false }
   if (mode === 'gray') return { wash: '#C2C2C2', gradient: false }
   return { wash: role === 'zhizhu' ? IP_MOUNTAIN[1] : IP_PEACH[1], gradient: true }
 }
@@ -36,7 +48,7 @@ function jianweiBody({ version, mode, colors, gradientId }) {
   const fly = jianweiInwardFly(version)
   const inward = `M ${fly.start.x} ${fly.start.y} L ${fly.end.x} ${fly.end.y}`
 
-  if (mode === 'silhouette') {
+  if (isCutout(mode)) {
     const stamp = sealRect()
     const shape = seal
       ? `<rect class="ip-seal" x="${stamp.x}" y="${stamp.y}" width="${stamp.size}" height="${stamp.size}" rx="${stamp.rx}" fill="${IP_INK}"/>`
@@ -45,7 +57,7 @@ function jianweiBody({ version, mode, colors, gradientId }) {
   }
 
   const frame = seal
-    ? `<rect class="ip-seal" x="8" y="8" width="80" height="80" rx="9" fill="none" stroke="${IP_INK}" stroke-width="${IP_STROKE_OUTER}"/>`
+    ? `<path class="ip-seal" d="${sealFramePath(false)}" fill="none" stroke="${IP_INK}" stroke-width="${IP_STROKE_OUTER}"/>`
     : ''
   const innerRing = seal
     ? `<circle cx="48" cy="48" r="${inner}" fill="none" stroke="${IP_INK}" stroke-width="${IP_STROKE_INNER}" opacity="0.55"/>`
@@ -66,13 +78,11 @@ function zhizhuBody({ version, mode, colors, gradientId }) {
   const innerR = seal ? 16 : 15
   const ribbon = `M ${fly.start.x} ${fly.start.y} Q ${fly.mid.x} ${fly.mid.y} ${fly.end.x} ${fly.end.y}`
   const wash = colors.gradient ? `url(#${gradientId})` : colors.wash
-  const frame = seal && mode !== 'silhouette'
-    ? `<rect class="ip-seal" x="8" y="8" width="80" height="80" rx="9" fill="none" stroke="${IP_INK}" stroke-width="${IP_STROKE_OUTER}" opacity="0.92"/>`
-    : ''
+  const openSeal = `<path class="ip-seal" d="${sealFramePath(true)}" fill="none" stroke="${IP_INK}" stroke-width="${IP_STROKE_OUTER}" opacity="0.92"/>`
 
-  if (mode === 'silhouette') {
+  if (isCutout(mode)) {
     const stamp = seal
-      ? `<rect class="ip-seal" x="8" y="8" width="80" height="80" rx="9" fill="none" stroke="${IP_INK}" stroke-width="4"/>`
+      ? `<path class="ip-seal" d="${sealFramePath(true)}" fill="none" stroke="${IP_INK}" stroke-width="4"/>`
       : ''
     return `${stamp}
     <path d="${zhizhuOpenArc(outerR, version)}" fill="none" stroke="${IP_INK}" stroke-width="${IP_SILHOUETTE_STROKE}" stroke-linecap="round"/>
@@ -80,7 +90,7 @@ function zhizhuBody({ version, mode, colors, gradientId }) {
   }
 
   return `
-    ${frame}
+    ${seal ? openSeal : ''}
     <path d="${zhizhuOpenArc(outerR, version)}" fill="none" stroke="${IP_INK}" stroke-width="${IP_STROKE_OUTER}" stroke-linecap="round"/>
     <path d="${zhizhuOpenArc(innerR, version)}" fill="none" stroke="${IP_INK}" stroke-width="${IP_STROKE_INNER}" stroke-linecap="round" opacity="0.72"/>
     <path d="${ribbon}" fill="none" stroke="${wash}" stroke-width="${seal ? 3.4 : 3.8}" stroke-linecap="round" opacity="0.88"/>
@@ -94,17 +104,17 @@ function jianweiFace(mode) {
       ? `<circle cx="48" cy="48" r="5.4" fill="${IP_PAPER}"/>`
       : ''
   return `${halo}<g class="ip-face" fill="${IP_INK}">
-    <circle cx="41" cy="36" r="1.55"/>
-    <circle cx="55" cy="36" r="1.55"/>
-    <path d="M39.4 32.8q1.8 1.1 3.6 0.15" fill="none" stroke="${IP_INK}" stroke-width="1.15" stroke-linecap="round"/>
-    <path d="M56.6 32.8q-1.8 1.1 -3.6 0.15" fill="none" stroke="${IP_INK}" stroke-width="1.15" stroke-linecap="round"/>
+    <circle cx="42.2" cy="39.6" r="1.55"/>
+    <circle cx="53.8" cy="39.6" r="1.55"/>
+    <path d="M40.6 36.2q1.7 1.15 3.5 0.2" fill="none" stroke="${IP_INK}" stroke-width="1.15" stroke-linecap="round"/>
+    <path d="M55.4 36.2q-1.7 1.15 -3.5 0.2" fill="none" stroke="${IP_INK}" stroke-width="1.15" stroke-linecap="round"/>
   </g>`
 }
 
 function zhizhuFace() {
   return `<g class="ip-face" fill="${IP_INK}">
-    <circle cx="33" cy="32.5" r="1.55"/>
-    <circle cx="43.5" cy="35.5" r="1.55"/>
+    <circle cx="36.5" cy="33.2" r="1.55"/>
+    <circle cx="46.4" cy="37.6" r="1.55"/>
   </g>`
 }
 
@@ -137,12 +147,13 @@ export function renderIpMarkSvg({
   const colors = palette(mode, role)
   const boneVersion = version === 'b' ? 'a' : version
   const vermillion = vermillionPoint(role, version)
-  const showFace = version === 'b' && detail !== 'icon' && mode !== 'silhouette'
+  const showFace = version === 'b' && detail !== 'icon' && !isCutout(mode)
   const label = labeled ? `${version.toUpperCase()} ${role === 'zhizhu' ? '知著' : '见微'}` : ''
   const cinR = version === 'c' ? 2.6 : IP_CINNABAR_R
   const wrap = (transform, inner) =>
     transform ? `<g transform="${transform}">${inner}</g>` : `<g>${inner}</g>`
-  const dot = `<circle cx="${vermillion.x}" cy="${vermillion.y}" r="${cinR}" fill="${IP_CINNABAR}"/>`
+  const dotFill = mode === 'ink' ? IP_INK : IP_CINNABAR
+  const dot = `<circle cx="${vermillion.x}" cy="${vermillion.y}" r="${cinR}" fill="${dotFill}"/>`
   const jianweiTilt = showFace ? 'rotate(-7 48 48)' : ''
   const zhizhuTilt = showFace ? `rotate(8 ${zhizhuOrigin('a').x} ${zhizhuOrigin('a').y})` : ''
   const body =

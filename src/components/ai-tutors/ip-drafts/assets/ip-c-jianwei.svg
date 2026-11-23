@@ -4,7 +4,7 @@
       <stop offset="55%" stop-color="#F4D0D7"/>
       <stop offset="100%" stop-color="#E9A2BB"/>
     </radialGradient></defs>
-    <g><rect class="ip-seal" x="8" y="8" width="80" height="80" rx="9" fill="none" stroke="#2C2C2C" stroke-width="2.2"/>
+    <g><path class="ip-seal" d="M 17 8 H 79 A 9 9 0 0 1 88 17 V 79 A 9 9 0 0 1 79 88 H 17 A 9 9 0 0 1 8 79 V 17 A 9 9 0 0 1 17 8 Z" fill="none" stroke="#2C2C2C" stroke-width="2.2"/>
     <circle cx="48" cy="48" r="8" fill="url(#c-jianwei-color)" opacity="0.5"/>
     <circle cx="48" cy="48" r="30" fill="none" stroke="#2C2C2C" stroke-width="2.2"/>
     <circle cx="48" cy="48" r="20" fill="none" stroke="#2C2C2C" stroke-width="1.35" opacity="0.78"/>

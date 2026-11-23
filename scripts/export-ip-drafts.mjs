@@ -8,7 +8,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const outDir = join(root, 'src/components/ai-tutors/ip-drafts/assets')
 const versions = ['a', 'b', 'c']
 const roles = ['jianwei', 'zhizhu']
-const modes = ['color', 'gray', 'silhouette']
+const modes = ['color', 'gray', 'silhouette', 'ink']
 const chrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 
 mkdirSync(outDir, { recursive: true })
@@ -46,7 +46,7 @@ writeFileSync(
 <style>
   body{margin:24px;background:#f8f4ec;color:#2c2c2c;font-family:sans-serif}
   h1{font-weight:500}
-  .grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px}
+  .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
   figure{margin:0;text-align:center}
   img{width:96px;height:96px;background:#f8f4ec}
   figcaption{margin-top:8px;font-size:12px;letter-spacing:.04em}

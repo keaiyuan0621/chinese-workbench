@@ -28,7 +28,7 @@ function PairStage({ order, version, mode, size, hidden }) {
               version={version}
               role={role}
               mode={mode}
-              detail={mode === 'silhouette' ? 'icon' : 'avatar'}
+              detail={mode === 'color' ? 'avatar' : 'icon'}
             />
           </div>
           <figcaption className="text-xs text-ink/40">{index === 0 ? '左' : '右'}</figcaption>
@@ -41,13 +41,13 @@ function PairStage({ order, version, mode, size, hidden }) {
 export function RecognitionTrial() {
   const reduced = useReducedMotion()
   const [version, setVersion] = useState('a')
-  const [kind, setKind] = useState('sil32')
+  const [kind, setKind] = useState('ink32')
   const [phase, setPhase] = useState('idle')
   const [order, setOrder] = useState(['jianwei', 'zhizhu'])
   const [log, setLog] = useState([])
 
-  const mode = kind === 'sil32' ? 'silhouette' : 'color'
-  const size = kind === 'sil32' ? '32' : '96'
+  const mode = kind === 'color96' ? 'color' : kind === 'sil32' ? 'silhouette' : 'ink'
+  const size = kind === 'color96' ? '96' : '32'
 
   useEffect(() => {
     if (phase !== 'showing' || reduced) return undefined
@@ -83,7 +83,7 @@ export function RecognitionTrial() {
     <section className="space-y-3 rounded-lg border-[0.5px] border-gold bg-white/80 p-4">
       <h3 className="font-serif text-lg">轮廓辨识试次（本机记录，不代替 10 人实测）</h3>
       <p className="text-sm text-ink/65">
-        无字、无角色名。展示 {TRIAL_MS / 1000} 秒后撤图，再选「向内聚焦」在哪一侧。左右随机并写入记录。
+        无字、无角色名。展示 {TRIAL_MS / 1000} 秒后立即撤图，凭记忆配对。极限墨色稿的朱砂也用同一墨色。
       </p>
       <div className="flex flex-wrap gap-2">
         {IP_VERSIONS.map((item) => (
@@ -99,11 +99,19 @@ export function RecognitionTrial() {
         ))}
         <button
           type="button"
+          className={`ip-drafts-pill${kind === 'ink32' ? ' is-on' : ''}`}
+          onClick={() => setKind('ink32')}
+          disabled={phase !== 'idle'}
+        >
+          32px 极限墨色
+        </button>
+        <button
+          type="button"
           className={`ip-drafts-pill${kind === 'sil32' ? ' is-on' : ''}`}
           onClick={() => setKind('sil32')}
           disabled={phase !== 'idle'}
         >
-          32px 剪影
+          32px 剪影+朱砂
         </button>
         <button
           type="button"

@@ -3,6 +3,8 @@ import { Link, Navigate } from 'react-router-dom'
 import InkSeal from '../../components/student/InkSeal.jsx'
 import { AiTutorMascotPair } from '../../components/ai-tutors/AiTutorMascot.jsx'
 import IpMark, { IpPair } from '../../components/ai-tutors/ip-drafts/IpMark.jsx'
+import ReviewLedger from '../../components/ai-tutors/ip-drafts/ReviewLedger.jsx'
+import ReviewSession from '../../components/ai-tutors/ip-drafts/ReviewSession.jsx'
 import { ExpectationTrial, RecognitionTrial } from '../../components/ai-tutors/ip-drafts/ReviewTrials.jsx'
 import {
   ACCEPTANCE,
@@ -11,7 +13,6 @@ import {
   FAMILY_RULES,
   PEDAGOGY,
   REPLACE_SCOPE,
-  REVIEW_ROWS,
   ROLLBACK,
   VERSION_CLAIMS,
 } from '../../components/ai-tutors/ip-drafts/reviewCopy.js'
@@ -131,6 +132,18 @@ function VersionBoard({ version, hideNames }) {
       </div>
 
       <div>
+        <p className="mb-2 text-xs tracking-[0.16em] text-ink/45">32px 极限墨色（朱砂也用同一墨色）</p>
+        <div className="flex items-end gap-4">
+          <Frame size="32" caption={hideNames ? '甲' : '见微'}>
+            <IpMark version={version} role="jianwei" mode="ink" detail="icon" />
+          </Frame>
+          <Frame size="32" caption={hideNames ? '乙' : '知著'}>
+            <IpMark version={version} role="zhizhu" mode="ink" detail="icon" />
+          </Frame>
+        </div>
+      </div>
+
+      <div>
         <p className="mb-2 text-xs tracking-[0.16em] text-ink/45">同一道语文题上的入口</p>
         <QuestionCard version={version} hideNames={hideNames} />
       </div>
@@ -140,6 +153,7 @@ function VersionBoard({ version, hideNames }) {
 
 export default function IpDraftReview() {
   const [hideNames, setHideNames] = useState(false)
+  const [sessionVersion, setSessionVersion] = useState('a')
   if (!import.meta.env.DEV) return <Navigate to="/" replace />
 
   return (
@@ -220,10 +234,16 @@ export default function IpDraftReview() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="font-serif text-2xl">同一错题 · 三版入口</h2>
+          <h2 className="font-serif text-2xl">同一张错题回看页</h2>
           <p className="text-sm text-ink/60">
-            交互把三版放进同一道语文题。文案固定为「让见微拆开讲」「跟知著想一想」。
+            入口统一为「让见微拆开讲」「跟知著想一想」。语文、数学、开放写作三道题三版共用。
           </p>
+          <ReviewSession
+            version={sessionVersion}
+            hideNames={hideNames}
+            onVersionChange={setSessionVersion}
+          />
+          <p className="text-xs tracking-[0.16em] text-ink/45">同一道语文题上的三版入口对照</p>
           <div className="grid gap-4 lg:grid-cols-3">
             {IP_VERSIONS.map((item) => (
               <div key={item.id} className="space-y-2">
@@ -324,42 +344,7 @@ export default function IpDraftReview() {
           </ul>
         </section>
 
-        <section className="space-y-3">
-          <h2 className="font-serif text-2xl">评审记录（三方各签一行）</h2>
-          <p className="text-sm text-ink/60">
-            Cursor 不裁结论。每项需附证据：32px 灰度截图、试用者口述、跨课程样例。接入前把本表与选定方案写入 PR。
-          </p>
-          <table>
-            <thead>
-              <tr>
-                <th>项目</th>
-                <th>A</th>
-                <th>B</th>
-                <th>C</th>
-                <th>证据</th>
-              </tr>
-            </thead>
-            <tbody>
-              {REVIEW_ROWS.map((row) => (
-                <tr key={row.id}>
-                  <td>{row.label}</td>
-                  <td />
-                  <td />
-                  <td />
-                  <td />
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="grid gap-4 pt-2 sm:grid-cols-3">
-            {['视觉', '交互', '教研'].map((team) => (
-              <p key={team} className="text-sm">
-                {team}签字
-                <span className="ip-drafts-sign ml-2 inline-block align-bottom" />
-              </p>
-            ))}
-          </div>
-        </section>
+        <ReviewLedger />
       </div>
     </div>
   )
