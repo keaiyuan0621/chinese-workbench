@@ -42,8 +42,8 @@ export default function AiTutorsPreview() {
           <p className="text-sm tracking-[0.2em] text-ink/50">仅开发环境可见</p>
           <h1 className="text-2xl">见微 / 知著 界面预览</h1>
           <p className="text-sm leading-relaxed text-gray-600">
-            这两道是示例题，用来看双角色入口、切换、提问、加载和失败重试。不必登录学生账户。
-            生产鉴权不会被绕过；若本机已注入服务端密钥，这里可以打到真实接口，否则会诚实提示未配置。
+            做题时只出现知著，他负责想下一步，看不到标准答案。提交并看到解析之后，见微和知著并排出现。
+            不必登录学生账户。生产鉴权不会被绕过；若本机已注入服务端密钥，这里可以打到真实接口，否则会诚实提示未配置。
           </p>
           <p className="text-sm">
             <Link to="/dev/ip-drafts" className="underline decoration-gold underline-offset-4">
@@ -51,6 +51,15 @@ export default function AiTutorsPreview() {
             </Link>
           </p>
         </header>
+
+        <section className="rounded-student bg-white px-4 py-5 sm:px-5">
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <span className="font-semibold text-ink">做题中</span>
+            <span className="rounded-full bg-gray-100 px-2.5 py-1 text-gray-500">尚未提交</span>
+          </div>
+          <p className="mt-3 text-base leading-relaxed text-gray-800">{SAMPLES[0].stem}</p>
+          <AiTutorPanel phase="thinking" preview question={SAMPLES[0]} studentAnswer="" />
+        </section>
 
         <ol className="space-y-4">
           {SAMPLES.map((question, index) => {

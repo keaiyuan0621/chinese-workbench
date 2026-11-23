@@ -41,6 +41,14 @@ export default function QuestionCard({ question, value, onChange, onCommit, pend
         )}
       </p>
 
+      {!submitted && (
+        <AiTutorPanel
+          phase="thinking"
+          question={question}
+          studentAnswer={formatStudentAnswer(question, value)}
+        />
+      )}
+
       <Body
         question={question}
         value={value}

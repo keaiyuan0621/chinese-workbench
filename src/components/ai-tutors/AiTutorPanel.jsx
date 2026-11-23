@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { AI_TUTOR_ROLES, askAiTutor, buildTutorPayload, isAiTutorsUiEnabled } from '../../lib/aiTutors.js'
-import AiTutorMascot, { AiTutorMascotPair } from './AiTutorMascot.jsx'
+import AiTutorMascot from './AiTutorMascot.jsx'
 import './ai-tutors.css'
 
 function SafeText({ text }) {
@@ -29,10 +29,12 @@ export default function AiTutorPanel({
   studentAnswer = '',
   originalExplanation = '',
   preview = false,
+  phase = 'review',
 }) {
   const enabled = isAiTutorsUiEnabled()
+  const thinking = phase === 'thinking'
   const [open, setOpen] = useState(false)
-  const [role, setRole] = useState('jianwei')
+  const [role, setRole] = useState(thinking ? 'zhizhu' : 'jianwei')
   const [draft, setDraft] = useState('')
   const [pending, setPending] = useState(false)
   const [threads, setThreads] = useState({
@@ -43,6 +45,7 @@ export default function AiTutorPanel({
   const current = AI_TUTOR_ROLES[role]
   const thread = threads[role] ?? emptyThread()
   const canAsk = Boolean(question?.stem) && !pending
+  const roles = thinking ? [AI_TUTOR_ROLES.zhizhu] : Object.values(AI_TUTOR_ROLES)
 
   const payloadBase = useMemo(
     () => ({
@@ -68,6 +71,7 @@ export default function AiTutorPanel({
         role: requestedRole,
         message: nextMessage,
         history: nextHistory,
+        withholdAnswer: thinking,
       })
     setPending(true)
     setThreads((prev) => ({
@@ -112,26 +116,33 @@ export default function AiTutorPanel({
   }
 
   return (
-    <section className="ai-tutors mt-4" aria-label="AI 讲解">
+    <section className={`ai-tutors ai-tutors--${thinking ? 'thinking' : 'review'}`} aria-label={thinking ? '知著引导' : '见微与知著'}>
       {!open ? (
-        <button
-          type="button"
-          className="ai-tutors-entry ai-tutors-card ai-tutors-card--jianwei"
-          onClick={() => setOpen(true)}
-        >
-          <AiTutorMascotPair />
-          <span className="ai-tutors-entry-copy">
-            <span className="ai-tutors-entry-title">请 AI 讲解</span>
-            <span className="ai-tutors-entry-duty block">
-              见微讲清细节，知著一步一步带你想。原解析仍保留在上面。
-            </span>
-          </span>
-        </button>
+        <div className="ai-tutors-gates">
+          {roles.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className={`ai-tutors-gate ai-tutors-gate--${item.id}`}
+              onClick={() => {
+                setRole(item.id)
+                setOpen(true)
+              }}
+            >
+              <AiTutorMascot role={item.id} pose="hero" alive />
+              <span className="ai-tutors-entry-copy">
+                <span className="ai-tutors-entry-title">{item.name}</span>
+                <span className="ai-tutors-entry-duty block">{item.gate}</span>
+                <span className="ai-tutors-entry-note block">{item.note}</span>
+              </span>
+            </button>
+          ))}
+        </div>
       ) : (
         <div className={`ai-tutors-card ai-tutors-card--${role}`}>
           <header className="ai-tutors-head">
             <div className="ai-tutors-identity">
-              <AiTutorMascot role={role} />
+              <AiTutorMascot role={role} pose="hero" alive busy={pending} />
               <div>
                 <div className="ai-tutors-name">{current.name}</div>
                 <p className="ai-tutors-duty">{current.duty}</p>
@@ -142,26 +153,29 @@ export default function AiTutorPanel({
             </button>
           </header>
 
-          <div className="ai-tutors-roles" role="tablist" aria-label="选择讲解角色">
-            {Object.values(AI_TUTOR_ROLES).map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                role="tab"
-                aria-selected={role === item.id}
-                disabled={pending}
-                className="ai-tutors-role"
-                onClick={() => setRole(item.id)}
-              >
-                <AiTutorMascot role={item.id} className="h-7 w-7" />
-                {item.name}
-              </button>
-            ))}
-          </div>
+          {roles.length > 1 && (
+            <div className="ai-tutors-roles" role="tablist" aria-label="选择讲解角色">
+              {roles.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={role === item.id}
+                  disabled={pending}
+                  className="ai-tutors-role"
+                  onClick={() => setRole(item.id)}
+                >
+                  <AiTutorMascot role={item.id} className="ai-tutors-figure--tiny" />
+                  {item.name}
+                </button>
+              ))}
+            </div>
+          )}
 
           <div className="ai-tutors-thread">
             {thread.messages.map((item, index) => (
               <div key={`${item.role}-${index}`} className={`ai-tutors-bubble ai-tutors-bubble--${item.role}`}>
+                {item.role === 'assistant' && <AiTutorMascot role={role} className="ai-tutors-figure--tiny" />}
                 <SafeText text={item.content} />
               </div>
             ))}

@@ -6,6 +6,8 @@ export const AI_TUTOR_ROLES = {
   jianwei: {
     id: 'jianwei',
     name: '见微',
+    gate: '把细节讲清楚',
+    note: '讲清选项差异和易漏之处',
     duty: '讲清细节、选项差异和易漏之处',
     startLabel: '请见微讲讲这题',
     askLabel: '想问哪个细节？',
@@ -14,6 +16,8 @@ export const AI_TUTOR_ROLES = {
   zhizhu: {
     id: 'zhizhu',
     name: '知著',
+    gate: '引导下一步思考',
+    note: '只给下一步，不直接给答案',
     duty: '一步一步带你想，不急着给完整答案',
     startLabel: '请知著带我想想',
     askLabel: '想到哪一步了？可以说说你的想法',
@@ -39,7 +43,14 @@ function optionText(question) {
   return ''
 }
 
-export function buildTutorPayload(question, { studentAnswer, originalExplanation, role, message, history }) {
+export function buildTutorPayload(question, {
+  studentAnswer,
+  originalExplanation,
+  role,
+  message,
+  history,
+  withholdAnswer = false,
+}) {
   const answerText =
     typeof studentAnswer === 'string' ? studentAnswer : formatStudentAnswer(question, studentAnswer)
   return {
@@ -48,8 +59,9 @@ export function buildTutorPayload(question, { studentAnswer, originalExplanation
     stem: question?.stem ?? '',
     options: optionText(question),
     studentAnswer: answerText,
-    originalExplanation: originalExplanation ?? question?.explanation ?? '',
-    referenceAnswer: formatAnswer(question ?? {}),
+    originalExplanation: withholdAnswer ? '' : (originalExplanation ?? question?.explanation ?? ''),
+    referenceAnswer: withholdAnswer ? '' : formatAnswer(question ?? {}),
+    withholdAnswer: Boolean(withholdAnswer),
     message: message ?? '',
     history: trimTutorHistory(history),
   }

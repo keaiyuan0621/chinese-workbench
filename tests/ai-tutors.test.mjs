@@ -77,6 +77,19 @@ test('知著首轮提示不倾倒答案，见微首轮要求讲细节', () => {
   assert.doesNotMatch(jianweiKickoff, /这是首轮/)
 })
 
+test('作答中的知著看不到标准答案和原解析', () => {
+  const messages = buildMessages({
+    role: 'zhizhu',
+    payload: { ...sample, role: 'zhizhu', withholdAnswer: true },
+  })
+  const kickoff = messages.at(-1).content
+  assert.match(kickoff, /还在作答/)
+  assert.match(kickoff, /不要写出标准答案/)
+  assert.doesNotMatch(kickoff, /参考答案/)
+  assert.doesNotMatch(kickoff, /音位从音素/)
+  assert.doesNotMatch(kickoff, /原解析/)
+})
+
 test('知著追问后不再使用首轮限制语', () => {
   const messages = buildMessages({
     role: 'zhizhu',

@@ -56,6 +56,7 @@ export function formatQuestionContext({
   studentAnswer,
   originalExplanation,
   referenceAnswer,
+  withholdAnswer = false,
 }) {
   const lines = [
     `题型：${clip(type, 40) || '未知'}`,
@@ -64,9 +65,13 @@ export function formatQuestionContext({
   const optionText = clip(options, 2000)
   if (optionText) lines.push(`选项：\n${optionText}`)
   lines.push(`学生作答：${clip(studentAnswer, 2000) || '未作答'}`)
-  lines.push(`原解析：${clip(originalExplanation, 4000) || '本题暂无解析'}`)
-  const answerText = clip(referenceAnswer, 2000)
-  if (answerText) lines.push(`参考答案：${answerText}`)
+  if (withholdAnswer) {
+    lines.push('学生还在作答。不要写出标准答案，也不要复述解析。')
+  } else {
+    lines.push(`原解析：${clip(originalExplanation, 4000) || '本题暂无解析'}`)
+    const answerText = clip(referenceAnswer, 2000)
+    if (answerText) lines.push(`参考答案：${answerText}`)
+  }
   return lines.join('\n')
 }
 
