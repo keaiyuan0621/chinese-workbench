@@ -126,7 +126,7 @@
 
 .ai-tutors-head {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem;
@@ -136,8 +136,13 @@
 .ai-tutors-identity {
   display: flex;
   min-width: 0;
+  flex: 1;
   align-items: center;
   gap: 0.75rem;
+}
+
+.ai-tutors-identity > div {
+  min-width: 0;
 }
 
 .ai-tutors-name {
@@ -154,6 +159,7 @@
 }
 
 .ai-tutors-close {
+  flex-shrink: 0;
   border-radius: 999px;
   padding: 0.35rem 0.8rem;
   font-size: 0.8rem;
@@ -299,91 +305,43 @@
 .ai-tutors-mascots {
   display: flex;
   align-items: center;
-}
-
-.ai-tutors-mascots .ai-tutors-figure:last-child {
-  margin-left: -0.55rem;
+  gap: 0.35rem;
 }
 
 .ai-tutors-figure {
   display: inline-flex;
   flex-shrink: 0;
-  overflow: hidden;
-  background: #f6efe4;
+  background: transparent;
+  line-height: 0;
 }
 
 .ai-tutors-figure img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   pointer-events: none;
 }
 
 .ai-tutors-figure.is-mark {
   width: 2.75rem;
   height: 2.75rem;
-  border-radius: 999px;
-}
-
-.ai-tutors-figure.is-mark img {
-  object-position: center 16%;
 }
 
 .ai-tutors-figure--tiny.is-mark {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 1.85rem;
+  height: 1.85rem;
 }
 
 .ai-tutors-figure.is-hero {
-  width: 7.25rem;
-  height: 8.4rem;
-  border-radius: 1.15rem;
+  width: 8.5rem;
+  height: 8.5rem;
 }
 
-.ai-tutors-figure.is-hero img {
-  object-position: center 12%;
-}
-
+.ai-tutors-card .ai-tutors-figure.is-hero,
 .ai-tutors--thinking .ai-tutors-figure.is-hero {
-  width: 5.4rem;
-  height: 6.3rem;
-}
-
-.ai-tutors-figure--jianwei.is-hero.is-alive img {
-  transform-origin: 58% 78%;
-  animation: jianwei-look 3s ease-in-out infinite;
-}
-
-.ai-tutors-figure--zhizhu.is-hero.is-alive img {
-  transform-origin: 42% 86%;
-  animation: zhizhu-step 3.4s ease-in-out infinite;
-}
-
-.ai-tutors-figure.is-busy img {
-  animation-duration: 1.15s;
-}
-
-@keyframes jianwei-look {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(7px);
-  }
-}
-
-@keyframes zhizhu-step {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  42% {
-    transform: translateX(8px) translateY(-3px);
-  }
-  72% {
-    transform: translateX(2px);
-  }
+  width: 6.25rem;
+  height: 6.25rem;
 }
 
 @media (min-width: 640px) {

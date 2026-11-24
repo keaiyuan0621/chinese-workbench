@@ -37,6 +37,7 @@ export default function AiTutorPanel({
   const [role, setRole] = useState(thinking ? 'zhizhu' : 'jianwei')
   const [draft, setDraft] = useState('')
   const [pending, setPending] = useState(false)
+  const [gesture, setGesture] = useState(0)
   const [threads, setThreads] = useState({
     jianwei: emptyThread(),
     zhizhu: emptyThread(),
@@ -59,6 +60,7 @@ export default function AiTutorPanel({
 
   async function send({ message = '', history, retryLast = false } = {}) {
     if (pending) return
+    setGesture((n) => n + 1)
     const requestedRole = role
     const fromThread = threads[requestedRole] ?? emptyThread()
     const last = retryLast ? fromThread.last : null
@@ -126,6 +128,7 @@ export default function AiTutorPanel({
               className={`ai-tutors-gate ai-tutors-gate--${item.id}`}
               onClick={() => {
                 setRole(item.id)
+                setGesture((n) => n + 1)
                 setOpen(true)
               }}
             >
@@ -142,7 +145,7 @@ export default function AiTutorPanel({
         <div className={`ai-tutors-card ai-tutors-card--${role}`}>
           <header className="ai-tutors-head">
             <div className="ai-tutors-identity">
-              <AiTutorMascot role={role} pose="hero" alive busy={pending} />
+              <AiTutorMascot role={role} pose="hero" alive busy={pending} gesture={gesture} />
               <div>
                 <div className="ai-tutors-name">{current.name}</div>
                 <p className="ai-tutors-duty">{current.duty}</p>
@@ -163,7 +166,10 @@ export default function AiTutorPanel({
                   aria-selected={role === item.id}
                   disabled={pending}
                   className="ai-tutors-role"
-                  onClick={() => setRole(item.id)}
+                  onClick={() => {
+                    setRole(item.id)
+                    setGesture((n) => n + 1)
+                  }}
                 >
                   <AiTutorMascot role={item.id} className="ai-tutors-figure--tiny" />
                   {item.name}
